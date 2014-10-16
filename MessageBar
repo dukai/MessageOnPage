@@ -1,0 +1,25 @@
+MessageBar
+	Bars
+		BarItem
+			UpdateCount
+			OpenWin
+			ClearAll
+			ClearTarget
+			
+	Toggle
+		Open
+		Close
+		Shine
+ChatWindow
+	Tab
+		AddTab
+		CloseTab
+	SmileWin
+		Open
+	UsefulExpWin
+		Open
+	UploadImagesWin
+		Open
+		Close
+	HistoryBtn
+		Open
