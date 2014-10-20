@@ -1,11 +1,14 @@
 MessageBar
 	Bars
 		BarItem
-			UpdateCount
-			OpenWin
-			ClearAll
-			ClearTarget
-			
+			updateCount
+			openWin
+			clearAll
+			clearTarget
+			showPopWin
+			hidePopWin
+			renderPopWin
+
 	Toggle
 		Open
 		Close

@@ -1,0 +1,275 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-family: "黑体", "Hiragino Sans GB" !important;
+}
+ul,
+ol,
+li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+p,
+input,
+button,
+table,
+tr,
+th,
+td,
+thead,
+tbody,
+pre {
+  padding: 0;
+  margin: 0;
+}
+strong {
+  font-weight: bold;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+blockquote,
+dl,
+dt,
+dd {
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+em,
+cite,
+i {
+  font-style: normal;
+}
+img {
+  border: none;
+}
+.abs {
+  position: absolute;
+}
+.rel {
+  position: relative;
+}
+.noborder {
+  border: 0 none !important;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.clear {
+  *zoom: 1;
+}
+.clear:after {
+  content: '\20';
+  display: block;
+  height: 0;
+  clear: both;
+}
+.msg-bar {
+  background: #ccc;
+  position: fixed;
+  right: 0;
+  bottom: 10px;
+}
+.msg-bar .bub {
+  position: absolute;
+  top: -20px;
+  right: 0;
+  height: 11px;
+  background: url(../images/bub_r.png) right;
+  display: inline-block;
+  font-size: 10px;
+  color: #fff;
+  margin-left: 4px;
+  line-height: 12px;
+  padding-right: 4px;
+}
+.msg-bar .bub i {
+  display: block;
+  width: 4px;
+  height: 11px;
+  background: url(../images/bub_l.png);
+  position: absolute;
+  top: 0;
+  left: -4px;
+}
+.msg-bar ul.bar_items {
+  height: 36px;
+  position: absolute;
+  right: 18px;
+  top: 0;
+  width: 222px;
+}
+.msg-bar ul.bar_items li.bar_item {
+  width: 36px;
+  height: 36px;
+  float: left;
+  border-right: 1px solid #393a2d;
+  background-color: #4f4b3a;
+}
+.msg-bar ul.bar_items li.bar_item a.btn_bar {
+  display: block;
+  width: 36px;
+  height: 34px;
+  cursor: pointer;
+  position: relative;
+}
+.msg-bar ul.bar_items li.bar_item a.btn_bar .bub {
+  right: 3px;
+  top: 3px;
+}
+.msg-bar ul.bar_items li.bar_item a.btn_bar:hover {
+  border-bottom: 2px solid #a2d100;
+  background-color: #706b56;
+}
+.msg-bar ul.bar_items li.bar_item.i-1 a.btn_bar {
+  background-image: url(../images/i_1.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-1 a.btn_bar.active {
+  background-image: url(../images/i_1_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-1 .popwin .title {
+  background-image: url(../images/i_1.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+.msg-bar ul.bar_items li.bar_item.i-2 a.btn_bar {
+  background-image: url(../images/i_2.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-2 a.btn_bar.active {
+  background-image: url(../images/i_2_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-3 a.btn_bar {
+  background-image: url(../images/i_3.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-3 a.btn_bar.active {
+  background-image: url(../images/i_3_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-4 a.btn_bar {
+  background-image: url(../images/i_4.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-4 a.btn_bar.active {
+  background-image: url(../images/i_4_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-5 a.btn_bar {
+  background-image: url(../images/i_5.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-5 a.btn_bar.active {
+  background-image: url(../images/i_5_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-6 a.btn_bar {
+  background-image: url(../images/i_6.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-6 a.btn_bar.active {
+  background-image: url(../images/i_6_h.png);
+}
+.msg-bar ul.bar_items li.bar_item .popwin {
+  width: 500px;
+  height: 420px;
+  border: 2px solid #4f4b3a;
+  position: absolute;
+  bottom: 40px;
+  right: 0px;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .title {
+  height: 36px;
+  line-height: 38px;
+  background: #4f4b3a;
+  color: #959389;
+  padding-left: 32px;
+  position: relative;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .title .fn_btns {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .title .fn_btns a {
+  display: inline-block;
+  width: 80px;
+  height: 24px;
+  background: #5f5c51;
+  cursor: pointer;
+  text-align: center;
+  line-height: 26px;
+  margin-right: 4px;
+  font-size: 12px;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .title .fn_btns a:hover {
+  color: #fff;
+  background: #8e8b7d;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .content {
+  font-size: 12px;
+  padding: 10px;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .content ul li {
+  margin-bottom: 10px;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .content b {
+  font-size: 14px;
+  color: #4f4b3a;
+  padding-right: 6px;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .content span {
+  color: #ccc;
+}
+.msg-bar ul.bar_items li.bar_item .popwin .content p {
+  background: #eae8e1;
+  line-height: 20px;
+  padding: 4px 4px;
+  border-radius: 3px;
+}
+.msg-bar .toggle {
+  width: 18px;
+  height: 36px;
+  background: url(../images/toggle_e.png) #4f4b3a;
+  cursor: pointer;
+}
+.chatbox {
+  width: 460px;
+  height: 500px;
+  border: 2px solid #4f4b3a;
+}
+.chatbox .title {
+  height: 36px;
+  line-height: 38px;
+  background: #4f4b3a;
+  color: #959389;
+  padding-left: 2px;
+  position: relative;
+}
+.chatbox .title .btn_close {
+  background: url(../images/btn_close.png) center center;
+  display: block;
+  width: 36px;
+  height: 36px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: pointer;
+}
+.chatbox .title .btn_close:hover {
+  background-color: #706b56;
+}
+.chatbox .content {
+  height: 300px;
+}
+.chatbox .fn_bar {
+  height: 36px;
+  background: #4f4b3a;
+}
+.chatbox .msgbox {
+  height: 92px;
+}
+.chatbox .chat_users {
+  height: 36px;
+  background: #4f4b3a;
+}

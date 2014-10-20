@@ -1,0 +1,226 @@
+@import "reset.less";
+.msg-bar{
+	background: #ccc;
+	position: fixed;
+	right: 0;
+	bottom: 10px;
+	.bub{
+		i{
+			.block;
+			.rect(4px, 11px);
+			background: url(../images/bub_l.png);
+			.abs;
+			top:0;
+			left:-4px;
+		}
+		.abs;
+		top:-20px;
+		right:0;
+		height: 11px;
+		background: url(../images/bub_r.png) right;
+		.inline-block;
+		font-size:10px;
+		color:#fff;
+		.ml(4px);
+		line-height: 12px;
+		.pr(4px);
+	}
+
+	ul.bar_items{
+		height: 36px;
+		.abs;
+		right:18px;
+		top:0;
+		width:222px;
+		li.bar_item{
+			.rect(36px);
+			.pull-left;
+			border-right:1px solid #393a2d;
+			background-color: #4f4b3a;
+			a.btn_bar{
+				.block;
+				.rect(36px, 34px);
+				.pointer;
+				.rel;
+				.bub{
+					right:3px;
+					top:3px;
+				}
+
+				&:hover{
+					border-bottom:2px solid #a2d100;
+					background-color: #706b56;
+				}
+			}
+			&.i-1{
+				a.btn_bar{
+					background-image: url(../images/i_1.png);
+					&.active{
+						background-image: url(../images/i_1_h.png);
+					}
+				}
+
+				.popwin{
+					.title{
+						background-image: url(../images/i_1.png);
+						background-repeat: no-repeat;
+						background-position: left center;
+					}
+				}
+			}
+
+			&.i-2{ 
+				a.btn_bar{
+					background-image: url(../images/i_2.png);
+					&.active{
+						background-image: url(../images/i_2_h.png);
+					}
+				}
+			}
+
+			&.i-3{ 
+				a.btn_bar{
+					background-image: url(../images/i_3.png);
+					&.active{
+						background-image: url(../images/i_3_h.png);
+					}
+				}
+			}
+
+			&.i-4{ 
+				a.btn_bar{
+					background-image: url(../images/i_4.png);
+					&.active{
+						background-image: url(../images/i_4_h.png);
+					}
+				}
+			}
+
+			&.i-5{ 
+				a.btn_bar{
+					background-image: url(../images/i_5.png);
+					&.active{
+						background-image: url(../images/i_5_h.png);
+					}
+				}
+			}
+
+			&.i-6{ 
+				a.btn_bar{
+					background-image: url(../images/i_6.png);
+					&.active{
+						background-image: url(../images/i_6_h.png);
+					}
+				}
+			}
+
+			.popwin{
+				.rect(500px, 420px);
+				border:2px solid #4f4b3a;
+				.abs;
+				bottom:40px;
+				right:0px;
+				.title{
+					height:36px;
+					line-height: 38px;
+					background: #4f4b3a;
+					color:#959389;
+					padding-left: 32px;
+					.rel;
+					.fn_btns{
+						.abs;
+						right:0;
+						top:0;
+						a{
+							.inline-block;
+							width: 80px;
+							height: 24px;
+							background: #5f5c51;
+							.pointer;
+							text-align: center;
+							line-height: 26px;
+							.mr(4px);
+							font-size: 12px;
+							&:hover{
+								color:#fff;
+								background: #8e8b7d;
+							}
+						}
+					}
+				}
+				.content{
+					font-size:12px;
+					padding:10px;
+					ul{
+						li{
+							.mb(10px);
+						}
+					}
+					b{
+						font-size:14px;
+						color:#4f4b3a;
+						padding-right: 6px;
+					}
+					span{
+						color:#ccc;
+					}
+					p{
+						background: #eae8e1;
+						line-height: 20px;
+						padding: 4px 4px;
+						border-radius: 3px;
+					}
+				}
+			}
+		}
+	}
+	.toggle{
+		.rect(18px, 36px);
+		background: url(../images/toggle_e.png) #4f4b3a;
+		.pointer;
+
+	}
+}
+
+.chatbox{
+	.rect(460px, 500px);
+	border:2px solid #4f4b3a;
+	.title{
+		height:36px;
+		line-height: 38px;
+		background: #4f4b3a;
+		color:#959389;
+		padding-left: 2px;
+		.rel;
+		.btn_close{
+			background: url(../images/btn_close.png) center center;
+			.block;
+			.rect(36px);
+			.abs;
+			right:0;
+			top:0;
+			.pointer;
+			&:hover{
+				background-color:#706b56;
+			}	
+		}
+	}
+
+	.content{
+		height: 300px;
+	}
+
+	.fn_bar{
+		height: 36px;
+		background: #4f4b3a;
+	}
+
+	.msgbox{
+		height: 92px;
+	}
+
+	.chat_users{
+		height: 36px;
+		background: #4f4b3a;	
+	}
+}
