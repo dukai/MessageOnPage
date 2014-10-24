@@ -210,6 +210,10 @@ img {
   font-size: 12px;
   padding: 10px;
 }
+.msg-bar ul.bar_items li.bar_item .popwin .content ul {
+  height: 364px;
+  overflow-y: auto;
+}
 .msg-bar ul.bar_items li.bar_item .popwin .content ul li {
   margin-bottom: 10px;
 }
@@ -261,15 +265,285 @@ img {
 }
 .chatbox .content {
   height: 300px;
+  padding: 0 10px;
+  overflow-y: auto;
+}
+.chatbox .content ul li {
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.chatbox .content ul li .cite {
+  line-height: 24px;
+}
+.chatbox .content ul li .cite em {
+  font-size: 14px;
+  color: #4f4b3a;
+}
+.chatbox .content ul li .cite cite {
+  font-size: 12px;
+  color: #ccc;
+}
+.chatbox .content ul li .msgcontent .msgtxt {
+  overflow: hidden;
+}
+.chatbox .content ul li .msgcontent .msgtxt .inset {
+  border-radius: 3px;
+  line-height: 20px;
+  padding: 8px;
+  clear: both;
+  margin: 0 8px;
+  position: relative;
+}
+.chatbox .content ul li .msgcontent .msgtxt .inset:before {
+  width: 0;
+  height: 0;
+  content: "";
+  display: block;
+  border: 6px solid transparent;
+  position: absolute;
+  top: 0;
+}
+.chatbox .content ul li .msgcontent .msgimg {
+  margin-top: 10px;
+}
+.chatbox .content ul li .msgcontent .msgimg .inset {
+  overflow: hidden;
+  clear: both;
+}
+.chatbox .content ul li .msgcontent .msgimg .inset a {
+  display: block;
+  height: 60px;
+  overflow: hidden;
+  float: left;
+  margin-right: 4px;
+}
+.chatbox .content ul li .msgcontent .msgimg .inset a img {
+  max-height: 60px;
+}
+.chatbox .content ul li .msgcontent .goods {
+  color: #999;
+  clear: both;
+  font-size: 12px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.chatbox .content ul li .msgcontent .goods .img {
+  float: left;
+  margin-right: 6px;
+}
+.chatbox .content ul li .msgcontent .goods .img img {
+  display: block;
+}
+.chatbox .content ul li .msgcontent .goods a {
+  color: #4f4b3a;
+}
+.chatbox .content ul li.opp .cite {
+  text-align: left;
+}
+.chatbox .content ul li.opp .cite em {
+  padding-right: 4px;
+}
+.chatbox .content ul li.opp .msgcontent .msgtxt .inset {
+  background: #f7f4e6;
+  float: left;
+}
+.chatbox .content ul li.opp .msgcontent .msgtxt .inset:before {
+  border-top-color: #f7f4e6;
+  border-right-color: #f7f4e6;
+  left: -8px;
+}
+.chatbox .content ul li.me .cite {
+  text-align: right;
+}
+.chatbox .content ul li.me .cite em {
+  padding-right: 4px;
+}
+.chatbox .content ul li.me .msgcontent .msgtxt .inset {
+  background: #eeecec;
+  float: right;
+}
+.chatbox .content ul li.me .msgcontent .msgtxt .inset:before {
+  border-top-color: #eeecec;
+  border-left-color: #eeecec;
+  right: -8px;
+}
+.chatbox .content ul li.me .msgcontent .msgimg .inset a {
+  float: right;
 }
 .chatbox .fn_bar {
   height: 36px;
   background: #4f4b3a;
 }
+.chatbox .fn_bar i.ico {
+  float: left;
+  cursor: pointer;
+  position: relative;
+}
+.chatbox .fn_bar i.ico:hover,
+.chatbox .fn_bar i.ico.active {
+  background-color: #706b56;
+  opacity: 1;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile {
+  border: 2px solid #4f4b3a;
+  width: 290px;
+  height: 170px;
+  position: absolute;
+  bottom: 36px;
+  left: 0;
+  background: url(../images/expression-1.gif) no-repeat #ffffff;
+  display: none;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile ul {
+  height: 146px;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile .tab {
+  height: 24px;
+  background-color: #706b56;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile .tab a {
+  display: inline-block;
+  float: left;
+  padding: 0 10px;
+  height: 24px;
+  line-height: 24px;
+  color: #fff;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile .tab a.active {
+  background-color: #fff;
+  color: #4f4b3a;
+}
+.chatbox .fn_bar i.ico.smile .pop.smile .tab a:hover {
+  background-color: #eae8e1;
+  color: #4f4b3a;
+}
+.chatbox .fn_bar i.ico.phrase .pop.phrase {
+  border: 2px solid #4f4b3a;
+  position: absolute;
+  bottom: 36px;
+  left: 0;
+  background-color: #fff;
+  width: 160px;
+  line-height: 24px;
+  display: none;
+}
+.chatbox .fn_bar i.ico.phrase .pop.phrase li {
+  padding: 0 4px;
+  font-size: 12px;
+}
+.chatbox .fn_bar i.ico.phrase .pop.phrase li:hover {
+  background-color: #706b56;
+  color: #fff;
+}
+.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg {
+  width: 60px;
+  padding: 6px;
+  border: 2px solid #4f4b3a;
+  position: absolute;
+  bottom: 36px;
+  left: 0;
+  background-color: #fff;
+  text-align: center;
+  display: none;
+}
+.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg .imgbox {
+  width: 60px;
+  text-align: center;
+}
+.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg .imgbox img {
+  max-width: 60px;
+  max-height: 60px;
+}
+.chatbox .fn_bar br {
+  clear: both;
+  width: 0;
+  height: 0;
+}
 .chatbox .msgbox {
   height: 92px;
 }
-.chatbox .chat_users {
+.chatbox .msgbox textarea {
+  width: 460px;
+  height: 92px;
+  border: 0;
+  padding: 0;
+  outline: none;
+}
+.chatbox .msgbox textarea:focus {
+  box-shadow: 0 0 6px #706b56 inset;
+}
+.chatbox .footer {
   height: 36px;
   background: #4f4b3a;
+  position: relative;
+}
+.chatbox .footer ul li {
+  background: #575447;
+  display: inline-block;
+  float: left;
+  color: #fff;
+  padding: 0 16px 0 6px;
+  line-height: 24px;
+  position: relative;
+  margin-right: 4px;
+  color: #aca899;
+  cursor: pointer;
+}
+.chatbox .footer ul li .ico {
+  width: 16px;
+  height: 24px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  text-align: center;
+  font-size: 10px;
+  color: #aca899;
+  cursor: pointer;
+}
+.chatbox .footer ul li .ico:hover {
+  color: #fff;
+}
+.chatbox .footer ul li.active {
+  border-bottom: 2px solid #a2d100;
+  background-color: #767366;
+  color: #fff;
+}
+.chatbox .footer ul li:hover {
+  background-color: #767366;
+}
+.chatbox .footer .btn_send {
+  width: 70px;
+  height: 26px;
+  position: absolute;
+  color: #fff;
+  background-color: #dc5421;
+  line-height: 26px;
+  text-align: center;
+  right: 4px;
+  top: 6px;
+  cursor: pointer;
+}
+.chatbox .footer .btn_send:hover {
+  background-color: #e4612f;
+}
+.msgonpage .ico {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+.msgonpage .ico.smile {
+  background: url(../images/i-smile.png);
+}
+.msgonpage .ico.phrase {
+  background: url(../images/i-message.png);
+}
+.msgonpage .ico.uploadimg {
+  background: url(../images/i-img.png);
+}
+.msgonpage .ico.history {
+  background: url(../images/i-history.png);
 }
