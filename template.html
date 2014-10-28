@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>DK Toolkit Index</title>
+	<script src="core.js"></script>
+</head>
+<body style="height: 3000px;">
+<script type="text/tmpl" id="tmpl_t">
+<h1></h1>
+<div><?=this.name?></div>	
+</script>
+<script type="text/javascript" src="./js/template.js"></script>
+<script type="text/javascript">
+use(function(require){
+	var Temp = require('./js/template');
+	var t = new Temp(document.getElementById('tmpl_t').innerHTML);
+	var html = t.render({name: 'dk'});
+	console.log(html);
+});
+
+</script>
+</body>
+</html>
