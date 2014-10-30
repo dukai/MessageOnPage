@@ -55,6 +55,9 @@
 					border-bottom:2px solid #a2d100;
 					background-color: #706b56;
 				}
+				&.highlight{
+					border-bottom:2px solid #a2d100;
+				}
 			}
 			&.i-1{
 				a.btn_bar{
@@ -80,6 +83,13 @@
 						background-image: url(../images/i_2_h.png);
 					}
 				}
+				.popwin{
+					.title{
+						background-image: url(../images/i_2.png);
+						background-repeat: no-repeat;
+						background-position: left center;
+					}
+				}
 			}
 
 			&.i-3{ 
@@ -87,6 +97,13 @@
 					background-image: url(../images/i_3.png);
 					&.active{
 						background-image: url(../images/i_3_h.png);
+					}
+				}
+				.popwin{
+					.title{
+						background-image: url(../images/i_3.png);
+						background-repeat: no-repeat;
+						background-position: left center;
 					}
 				}
 			}
@@ -98,6 +115,13 @@
 						background-image: url(../images/i_4_h.png);
 					}
 				}
+				.popwin{
+					.title{
+						background-image: url(../images/i_4.png);
+						background-repeat: no-repeat;
+						background-position: left center;
+					}
+				}
 			}
 
 			&.i-5{ 
@@ -105,6 +129,13 @@
 					background-image: url(../images/i_5.png);
 					&.active{
 						background-image: url(../images/i_5_h.png);
+					}
+				}
+				.popwin{
+					.title{
+						background-image: url(../images/i_5.png);
+						background-repeat: no-repeat;
+						background-position: left center;
 					}
 				}
 			}
@@ -116,6 +147,13 @@
 						background-image: url(../images/i_6_h.png);
 					}
 				}
+				.popwin{
+					.title{
+						background-image: url(../images/i_6.png);
+						background-repeat: no-repeat;
+						background-position: left center;
+					}
+				}
 			}
 
 			.popwin{
@@ -124,6 +162,7 @@
 				.abs;
 				bottom:40px;
 				right:0px;
+				.hidden;
 				.title{
 					height:36px;
 					line-height: 38px;
@@ -455,6 +494,8 @@
 			border: 0;
 			padding: 0;
 			outline: none;
+			font-size: 14px;
+			line-height: 24px;
 			&:focus{
 				box-shadow: 0 0 6px #706b56 inset;
 			}

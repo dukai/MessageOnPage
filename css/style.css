@@ -129,6 +129,9 @@ img {
   border-bottom: 2px solid #a2d100;
   background-color: #706b56;
 }
+.msg-bar ul.bar_items li.bar_item a.btn_bar.highlight {
+  border-bottom: 2px solid #a2d100;
+}
 .msg-bar ul.bar_items li.bar_item.i-1 a.btn_bar {
   background-image: url(../images/i_1.png);
 }
@@ -146,11 +149,21 @@ img {
 .msg-bar ul.bar_items li.bar_item.i-2 a.btn_bar.active {
   background-image: url(../images/i_2_h.png);
 }
+.msg-bar ul.bar_items li.bar_item.i-2 .popwin .title {
+  background-image: url(../images/i_2.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
 .msg-bar ul.bar_items li.bar_item.i-3 a.btn_bar {
   background-image: url(../images/i_3.png);
 }
 .msg-bar ul.bar_items li.bar_item.i-3 a.btn_bar.active {
   background-image: url(../images/i_3_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-3 .popwin .title {
+  background-image: url(../images/i_3.png);
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 .msg-bar ul.bar_items li.bar_item.i-4 a.btn_bar {
   background-image: url(../images/i_4.png);
@@ -158,17 +171,32 @@ img {
 .msg-bar ul.bar_items li.bar_item.i-4 a.btn_bar.active {
   background-image: url(../images/i_4_h.png);
 }
+.msg-bar ul.bar_items li.bar_item.i-4 .popwin .title {
+  background-image: url(../images/i_4.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
 .msg-bar ul.bar_items li.bar_item.i-5 a.btn_bar {
   background-image: url(../images/i_5.png);
 }
 .msg-bar ul.bar_items li.bar_item.i-5 a.btn_bar.active {
   background-image: url(../images/i_5_h.png);
 }
+.msg-bar ul.bar_items li.bar_item.i-5 .popwin .title {
+  background-image: url(../images/i_5.png);
+  background-repeat: no-repeat;
+  background-position: left center;
+}
 .msg-bar ul.bar_items li.bar_item.i-6 a.btn_bar {
   background-image: url(../images/i_6.png);
 }
 .msg-bar ul.bar_items li.bar_item.i-6 a.btn_bar.active {
   background-image: url(../images/i_6_h.png);
+}
+.msg-bar ul.bar_items li.bar_item.i-6 .popwin .title {
+  background-image: url(../images/i_6.png);
+  background-repeat: no-repeat;
+  background-position: left center;
 }
 .msg-bar ul.bar_items li.bar_item .popwin {
   width: 500px;
@@ -177,6 +205,7 @@ img {
   position: absolute;
   bottom: 40px;
   right: 0px;
+  display: none;
 }
 .msg-bar ul.bar_items li.bar_item .popwin .title {
   height: 36px;
@@ -472,6 +501,8 @@ img {
   border: 0;
   padding: 0;
   outline: none;
+  font-size: 14px;
+  line-height: 24px;
 }
 .chatbox .msgbox textarea:focus {
   box-shadow: 0 0 6px #706b56 inset;
