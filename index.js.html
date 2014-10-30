@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>DK Toolkit Index</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body style="height: 3000px;">
+<script type="text/html" id="tmpl_popwin">
+	<div class="title">
+		<?=this.title?>
+		<div class="fn_btns"><a>清除通知</a><a>收件箱</a></div>
+	</div>
+	<div class="content">
+		<ul class="sms_list">
+		</ul>
+	</div>
+</script>
+<script type="text/html" id="tmpl_fn_bar">
+	<i class="ico smile">
+		<div class="pop smile">
+			<ul></ul>
+			<div class="tab">
+				<a class="active">1</a><a>2</a>
+			</div>
+		</div>
+	</i>
+	<i class="ico phrase">
+		<ul class="pop phrase">
+			<li>诚问价格？</li>
+			<li>中介费一人一半。</li>
+			<li>已经出了，感谢关注！</li>
+			<li>谢谢！</li>
+		</ul>
+	</i>
+	<i class="ico uploadimg">
+		<div class="pop uploadimg">
+			<div class="imgbox"><img src="images/si-1.jpg"/></div>
+			<a>删除</a>
+		</div>
+	</i>
+	<i class="ico history"></i>
+</script>
+<script type="text/javascript" src="core.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="tools.js"></script>
+<script type="text/javascript" src="js/template.js"></script>
+<script type="text/javascript" src="MessageBar.js"></script>
+<script type="text/javascript">
+use(function(require){
+var MOP = require('./MessageBar');
+new MOP.MsgUI();
+});
+</script>
+</body>
+</html>
