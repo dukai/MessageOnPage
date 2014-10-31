@@ -152,11 +152,11 @@ MOP.MsgStatus.prototype = {
 	},
 
 	openBox: function(){
-		this.popwin.style.display = 'block';
+		$(this.popwin).show('normal');
 		$(this.barBtn).addClass('highlight');
 	},
 	closeBox: function(){
-		this.popwin.style.display = 'none';
+		$(this.popwin).hide('fast');
 		$(this.barBtn).removeClass('highlight');
 	},
 	setCount: function(count){
@@ -244,7 +244,14 @@ MOP.ChatBox.prototype = {
 		}, options);	
 
 		this.initUI();
+		this.panel = $(this.chatBox);
 		this.initEvents();
+		new MOP.SimpleTab({
+			container: this.chatBox,
+			tab: '.footer ul li',
+			content: '.content>ul',
+			selectClass: 'active'
+		});
 	},
 	initUI: function(){
 		var chatBox = this.chatBox = $c('div', null, 'chatbox msgonpage');
@@ -258,8 +265,8 @@ MOP.ChatBox.prototype = {
 		title.appendChild(t2);
 		title.appendChild(btnClose);
 		var content = this.content = $c('div', null, 'content');
-		var msgList = this.msgList = $c('ul');
-		content.appendChild(msgList);
+		//var msgList = this.msgList = $c('ul');
+		//content.appendChild(msgList);
 		var fnBar = $c('div', null, 'fn_bar');
 		fnBar.innerHTML = this.options.fnBarTemplate;
 		var msgBox = $c('div', null, 'msgbox');
@@ -281,7 +288,20 @@ MOP.ChatBox.prototype = {
 
 	},
 	initEvents: function(){
-
+		var self = this;
+		this.panel.find('.btnbox .ico').click(function(e){
+			self.panel.find('.btnbox .pop').hide();
+			$(this.parentNode).find('.pop').toggle();
+		});
+	},
+	//person {senderName: '', senderUid: ''}
+	addChatPerson: function(person){
+		var li = $c('li', null, '');
+		li.innerHTML = '<span>' + person.senderName + '</span><i class="ico close">x</i>';
+		this.toUserList.appendChild(li);
+		var msglist = $c('ul');
+		msglist.innerHTML = person.senderName;
+		this.content.appendChild(msglist);
 	},
 
 	getDom: function(){
@@ -289,8 +309,52 @@ MOP.ChatBox.prototype = {
 	}
 };
 
-MOP.SimpleTab = function(){
-
+MOP.SimpleTab = function(options){
+	this._initSimpleTab(options);	
 };
+MOP.SimpleTab.prototype = {
+	_initSimpleTab: function(options){
+		EventEmitter.call(this);
+		this.options = mix({
+			container: '',
+			tab: '',
+			content: '',
+			fireevent: 'click',
+			selectClass: 'select'
+		}, options);
+		this.selectedIndex = 0;
+		this.panel = $(this.options.container);
+		this.initUI();
+		this.initEvents();
+	},
+	initUI: function(){
+		this.panel.find(this.options.tab).each(function(index){
+			this.tabindex = index;
+		});
+		this.panel.find(this.options.content).hide();
+		this.show(this.selectedIndex);
+	},
+	initEvents: function(){
+		var self = this;
+		this.panel.find(this.options.tab).bind(this.options.fireevent, function(e){
+			var index = this.tabindex;
+			self.emit('tabselect', {index: index});
+			self.show(index);
+		})
+	},
+	show: function(index){
+		var o = this.options;
+		this.panel.find(o.tab + ':eq(' + this.selectedIndex + ')').removeClass(o.selectClass);
+		this.panel.find(o.tab + ':eq(' + index + ')').addClass(o.selectClass);
+		this.panel.find(o.content + ':eq(' + this.selectedIndex + ')').hide();
+		this.panel.find(o.content + ':eq(' + index + ')').show();
+		var event = {
+			prevIndex: this.selectedIndex, index: index
+		};
+		this.selectedIndex = index;
+		this.emit('show', event);	
+	}
+};
+extend(MOP.SimpleTab, EventEmitter);
 module.exports = MOP;
 });
