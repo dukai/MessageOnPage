@@ -252,6 +252,12 @@ MOP.ChatBox.prototype = {
 			content: '.content>ul',
 			selectClass: 'active'
 		});
+		new MOP.SimpleTab({
+			container: $(this.chatBox).find('.pop.smile'),
+			tab: '.tab a',
+			content: 'ul li',
+			selectClass: 'active'
+		});
 	},
 	initUI: function(){
 		var chatBox = this.chatBox = $c('div', null, 'chatbox msgonpage');

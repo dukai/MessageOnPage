@@ -424,11 +424,20 @@ img {
   position: absolute;
   bottom: 36px;
   left: 0;
-  background: url(../images/expression-1.gif) no-repeat #ffffff;
   display: none;
 }
 .chatbox .fn_bar div.btnbox .pop.smile ul {
   height: 146px;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li {
+  width: 290px;
+  height: 146px;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li.s1 {
+  background: url(../images/expression-1.gif) no-repeat #ffffff;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li.s2 {
+  background: url(../images/expression-2.gif) no-repeat #ffffff;
 }
 .chatbox .fn_bar div.btnbox .pop.smile .tab {
   height: 24px;
