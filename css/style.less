@@ -390,7 +390,7 @@
 		height: 36px;
 		background: #4f4b3a;
 		//overflow: hidden;
-		i.ico{
+		div.btnbox{
 			float: left;
 			.pointer;
 			//opacity: .6;
@@ -400,85 +400,82 @@
 				opacity: 1;
 			}
 
-			&.smile{
-				.pop.smile{
-					border: 2px solid #4f4b3a;
-					.rect(290px, 170px);
-					.abs;
-					bottom:36px;
-					left:0;
-					background:url(../images/expression-1.gif) no-repeat #fff;
-					.hidden;
-					ul{
-						height: 146px;
+			.ico.smile{}
+			.pop.smile{
+				border: 2px solid #4f4b3a;
+				.rect(290px, 170px);
+				.abs;
+				bottom:36px;
+				left:0;
+				background:url(../images/expression-1.gif) no-repeat #fff;
+				.hidden;
+				ul{
+					height: 146px;
 
-					}
+				}
 
-					.tab{
+				.tab{
+					height: 24px;
+					background-color: #706b56;
+
+					a{
+						.inline-block;
+						.pull-left;
+						padding: 0 10px;
 						height: 24px;
-						background-color: #706b56;
+						line-height: 24px;
+						color: #fff;
 
-						a{
-							.inline-block;
-							.pull-left;
-							padding: 0 10px;
-							height: 24px;
-							line-height: 24px;
-							color: #fff;
-
-							&.active{
-								background-color: #fff;
-								color: #4f4b3a;
-							}
-							&:hover{
-								background-color: @light;
-								color: @dark;
-							}
+						&.active{
+							background-color: #fff;
+							color: #4f4b3a;
 						}
-					}
-				}
-			}
-			&.phrase{
-				.pop.phrase{
-					border: 2px solid #4f4b3a;
-					.abs;
-					bottom:36px;
-					left:0;
-					background-color: #fff;
-					width:160px;
-					line-height: 24px;
-					.hidden;
-					li{
-						padding:0 4px;
-						font-size: 12px;
 						&:hover{
-							background-color: #706b56;
-							color:#fff;
-
+							background-color: @light;
+							color: @dark;
 						}
 					}
 				}
 			}
-			&.uploadimg{
-				.pop.uploadimg{
-					width: 60px;
-					padding: 6px;
-					border: 2px solid #4f4b3a;
-					.abs;
-					bottom: 36px;
-					left: 0;
-					background-color: #fff;
-					text-align: center;
-					.imgbox{
-						width: 60px;
-						text-align: center;
-						img{
-							max-width: 60px;
-							max-height: 60px;
-						}
+			.ico.phrase{}
+			.pop.phrase{
+				border: 2px solid #4f4b3a;
+				.abs;
+				bottom:36px;
+				left:0;
+				background-color: #fff;
+				width:160px;
+				line-height: 24px;
+				.hidden;
+				li{
+					padding:0 4px;
+					font-size: 12px;
+					&:hover{
+						background-color: #706b56;
+						color:#fff;
+
 					}
-					.hidden;
 				}
+			}
+			.ico.uploadimg{}
+			.pop.uploadimg{
+				width: 60px;
+				padding: 6px;
+				border: 2px solid #4f4b3a;
+				.abs;
+				bottom: 36px;
+				left: 0;
+				background-color: #fff;
+				text-align: center;
+				.imgbox{
+					width: 60px;
+					text-align: center;
+					img{
+						max-width: 60px;
+						max-height: 60px;
+					}
+				}
+				.hidden;
 			}
 		}
 		br{

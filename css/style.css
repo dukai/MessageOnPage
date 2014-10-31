@@ -407,17 +407,17 @@ img {
   height: 36px;
   background: #4f4b3a;
 }
-.chatbox .fn_bar i.ico {
+.chatbox .fn_bar div.btnbox {
   float: left;
   cursor: pointer;
   position: relative;
 }
-.chatbox .fn_bar i.ico:hover,
-.chatbox .fn_bar i.ico.active {
+.chatbox .fn_bar div.btnbox:hover,
+.chatbox .fn_bar div.btnbox.active {
   background-color: #706b56;
   opacity: 1;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile {
+.chatbox .fn_bar div.btnbox .pop.smile {
   border: 2px solid #4f4b3a;
   width: 290px;
   height: 170px;
@@ -427,14 +427,14 @@ img {
   background: url(../images/expression-1.gif) no-repeat #ffffff;
   display: none;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile ul {
+.chatbox .fn_bar div.btnbox .pop.smile ul {
   height: 146px;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile .tab {
+.chatbox .fn_bar div.btnbox .pop.smile .tab {
   height: 24px;
   background-color: #706b56;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile .tab a {
+.chatbox .fn_bar div.btnbox .pop.smile .tab a {
   display: inline-block;
   float: left;
   padding: 0 10px;
@@ -442,15 +442,15 @@ img {
   line-height: 24px;
   color: #fff;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile .tab a.active {
+.chatbox .fn_bar div.btnbox .pop.smile .tab a.active {
   background-color: #fff;
   color: #4f4b3a;
 }
-.chatbox .fn_bar i.ico.smile .pop.smile .tab a:hover {
+.chatbox .fn_bar div.btnbox .pop.smile .tab a:hover {
   background-color: #eae8e1;
   color: #4f4b3a;
 }
-.chatbox .fn_bar i.ico.phrase .pop.phrase {
+.chatbox .fn_bar div.btnbox .pop.phrase {
   border: 2px solid #4f4b3a;
   position: absolute;
   bottom: 36px;
@@ -460,15 +460,15 @@ img {
   line-height: 24px;
   display: none;
 }
-.chatbox .fn_bar i.ico.phrase .pop.phrase li {
+.chatbox .fn_bar div.btnbox .pop.phrase li {
   padding: 0 4px;
   font-size: 12px;
 }
-.chatbox .fn_bar i.ico.phrase .pop.phrase li:hover {
+.chatbox .fn_bar div.btnbox .pop.phrase li:hover {
   background-color: #706b56;
   color: #fff;
 }
-.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg {
+.chatbox .fn_bar div.btnbox .pop.uploadimg {
   width: 60px;
   padding: 6px;
   border: 2px solid #4f4b3a;
@@ -479,11 +479,11 @@ img {
   text-align: center;
   display: none;
 }
-.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg .imgbox {
+.chatbox .fn_bar div.btnbox .pop.uploadimg .imgbox {
   width: 60px;
   text-align: center;
 }
-.chatbox .fn_bar i.ico.uploadimg .pop.uploadimg .imgbox img {
+.chatbox .fn_bar div.btnbox .pop.uploadimg .imgbox img {
   max-width: 60px;
   max-height: 60px;
 }
