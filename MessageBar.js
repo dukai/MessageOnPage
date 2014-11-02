@@ -359,6 +359,11 @@ MOP.ChatBox.prototype = {
 		$(this.btnSend).click(function(){
 			//handle send message event
 		});
+		$(this.toUserList).delegate('li i.ico.close', 'click', function(){
+			$(self.content).find('>ul').eq(this.parentNode.tabindex).remove();
+			$(this.parentNode).remove();	
+			self.chattab.buildTabStatus();
+		});
 	},
 	//person {senderName: '', senderUid: ''}
 	addChatPerson: function(person){
