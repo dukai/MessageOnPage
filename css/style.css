@@ -77,6 +77,7 @@ img {
   position: fixed;
   right: 0;
   bottom: 10px;
+  z-index: 999;
 }
 .msg-bar .bub {
   position: absolute;
@@ -238,6 +239,7 @@ img {
 .msg-bar ul.bar_items li.bar_item .popwin .content {
   font-size: 12px;
   padding: 10px;
+  background: #fff;
 }
 .msg-bar ul.bar_items li.bar_item .popwin .content ul {
   height: 364px;
@@ -412,8 +414,8 @@ img {
   cursor: pointer;
   position: relative;
 }
-.chatbox .fn_bar div.btnbox:hover,
-.chatbox .fn_bar div.btnbox.active {
+.chatbox .fn_bar div.btnbox .ico:hover,
+.chatbox .fn_bar div.btnbox .ico.active {
   background-color: #706b56;
   opacity: 1;
 }
@@ -427,17 +429,37 @@ img {
   display: none;
 }
 .chatbox .fn_bar div.btnbox .pop.smile ul {
-  height: 146px;
+  height: 147px;
 }
 .chatbox .fn_bar div.btnbox .pop.smile ul li {
   width: 290px;
-  height: 146px;
+  height: 147px;
 }
 .chatbox .fn_bar div.btnbox .pop.smile ul li.s1 {
   background: url(../images/expression-1.gif) no-repeat #ffffff;
 }
 .chatbox .fn_bar div.btnbox .pop.smile ul li.s2 {
   background: url(../images/expression-2.gif) no-repeat #ffffff;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li span {
+  width: 28px;
+  height: 28px;
+  display: block;
+  float: left;
+  margin-right: 1px;
+  margin-bottom: 1px;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li span a {
+  width: 26px;
+  height: 26px;
+  display: block;
+  border-color: #AFB3BD #DFE1E3 #DFE1E3 #AFB3BD;
+  border-style: solid;
+  border-width: 0;
+  text-decoration: none;
+}
+.chatbox .fn_bar div.btnbox .pop.smile ul li span a:hover {
+  border-width: 1px;
 }
 .chatbox .fn_bar div.btnbox .pop.smile .tab {
   height: 24px;

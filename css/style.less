@@ -8,6 +8,7 @@
 	position: fixed;
 	right: 0;
 	bottom: 10px;
+	z-index: 999;
 	.bub{
 		i{
 			.block;
@@ -194,6 +195,7 @@
 				.content{
 					font-size:12px;
 					padding:10px;
+					background: #fff;
 
 					ul{
 						height: 364px;
@@ -395,9 +397,12 @@
 			.pointer;
 			//opacity: .6;
 			.rel;
-			&:hover, &.active{
-				background-color: #706b56;
-				opacity: 1;
+
+			.ico{
+				&:hover, &.active{
+					background-color: #706b56;
+					opacity: 1;
+				}
 			}
 
 			.ico.smile{}
@@ -409,14 +414,32 @@
 				left:0;
 				.hidden;
 				ul{
-					height: 146px;
+					height: 147px;
 					li{
-						.rect(290px, 146px);
+						.rect(290px, 147px);
 						&.s1{
 							background:url(../images/expression-1.gif) no-repeat #fff;
 						}
 						&.s2{
 							background:url(../images/expression-2.gif) no-repeat #fff;
+						}
+						span{
+							.rect(28px);
+							.block;
+							.pull-left;
+							.mr(1px);
+							.mb(1px);
+							a{
+								.rect(26px);		
+								.block;
+								border-color: #AFB3BD #DFE1E3 #DFE1E3 #AFB3BD;
+								border-style: solid;
+								border-width: 0;
+								text-decoration: none;
+								&:hover{
+									border-width: 1px;
+								}
+							}
 						}
 					}
 				}
