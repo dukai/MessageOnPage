@@ -21,8 +21,16 @@
 		<a class="ico smile"></a>
 		<div class="pop smile">
 			<ul>
-				<li class="s1"></li>
-				<li class="s2"></li>
+				<li class="s1">
+					<?for(var i = 0; i < 50; i++){?>
+					<span><a href="#<?=this.faces[i][1]?>">&nbsp;</a></span>
+					<?}?>
+				</li>
+				<li class="s2">
+				<?for(var i = 50; i < 90; i++){?>
+					<span><a href="#<?=this.faces[i][1]?>">&nbsp;</a></span>
+					<?}?>
+				</li>
 			</ul>
 			<div class="tab">
 				<a class="active">1</a><a>2</a>
