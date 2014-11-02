@@ -71,19 +71,29 @@ MOP.MsgBar.prototype = {
 	_initMsgBar: function(options){
 		this.options = mix({}, options);
 		this.initUI();
+		this.panel = $(this.bar);
+		this.initEvents();
 	},
 	initUI: function(){
 		var bar = this.bar = $c('div', null, 'msg-bar msgonpage');
-		var bub = $c('div', null, 'bub');
+		var bub = this.bub = $c('div', null, 'bub total');
 		bub.innerHTML = "<i></i>";
-		var bubNumber = $c('span');
+		var bubNumber = this.bubNumber = $c('span');
 		bub.appendChild(bubNumber);
+		bubNumber.innerHTML = '0';
 		var barItems = this.barItems = $c('ul', null, 'bar_items');
-		var toggle = $c('div', null, 'toggle');
+		var toggle = this.toggle = $c('div', null, 'toggle');
 		bar.appendChild(bub);
 		bar.appendChild(barItems);
 		bar.appendChild(toggle);
 
+	},
+	initEvents: function(){
+		var self = this;
+		$(this.toggle).click(function(){
+			$(self.barItems).toggle();
+			$(self.bub).toggle();
+		});
 	},
 	open: function(){
 
@@ -92,7 +102,7 @@ MOP.MsgBar.prototype = {
 
 	},
 	setTotal: function(count){
-
+		this.bubNumber.innerHTML = count;
 	},
 
 	getDom: function(){
@@ -344,6 +354,10 @@ MOP.ChatBox.prototype = {
 			self.addText(this.innerHTML);
 			self.panel.find('.fn_bar .btnbox .pop.phrase').hide();
 			self.panel.find('.fn_bar .btnbox .ico.phrase').removeClass('active');
+		});
+
+		$(this.btnSend).click(function(){
+			//handle send message event
 		});
 	},
 	//person {senderName: '', senderUid: ''}
