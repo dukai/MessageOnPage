@@ -344,10 +344,11 @@ MOP.ChatBox.prototype = {
 			self.lastPop = this;
 		});
 		//表情事件
-		this.panel.find('.fn_bar .btnbox .pop.smile').delegate('ul span a', 'click',function(){
+		this.panel.find('.fn_bar .btnbox .pop.smile').delegate('ul span a', 'click',function(e){
 			self.addText(this.hash.substr(1));
 			self.panel.find('.fn_bar .btnbox .pop.smile').hide();
 			self.panel.find('.fn_bar .btnbox .ico.smile').removeClass('active');
+			e.preventDefault();
 		});
 		//快捷短语
 		this.panel.find('.fn_bar .btnbox .pop.phrase').delegate('li', 'click', function(){
