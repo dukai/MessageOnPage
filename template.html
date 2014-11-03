@@ -8,7 +8,10 @@
 <body style="height: 3000px;">
 <script type="text/tmpl" id="tmpl_t">
 <h1></h1>
-<div><?=this.name?></div>	
+<div><?=this.name?></div>
+<?for(var i =0; i < 10; i++){ ?>
+	<a><?=i?></a>
+<?}?>
 </script>
 <script type="text/javascript" src="./js/template.js"></script>
 <script type="text/javascript">
