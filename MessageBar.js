@@ -1,36 +1,13 @@
-/*************
-MessageBar
-	Bars
-		BarItem
-			updateCount
-			openWin
-			clearAll
-			clearTarget
-			showPopWin
-			hidePopWin
-			renderPopWin
-
-	Toggle
-		Open
-		Close
-		Shine
-ChatWindow
-	Tab
-		AddTab
-		CloseTab
-	SmileWin
-		Open
-	UsefulExpWin
-		Open
-	UploadImagesWin
-		Open
-		Close
-	HistoryBtn
-		Open
-******************/
+/**
+SSSC MESSAGE ON PAGE
+Author DK
+DATE: 2014-10-20
+*/
 define(function(require, exports, module){
 
 var Template = require('./js/template');
+var swfobj = require('./js/swfobject');
+var msgtool = require('./js/msgtool');
 var MOP = {};
 MOP.ModelBase = function(options){
 	this._initModelBase(options);
@@ -38,21 +15,41 @@ MOP.ModelBase = function(options){
 
 MOP.ModelBase.prototype = {
 	_initModelBase: function(options){
-		this.options = mix({}, options);
+		this.options = mix({
+			default: {}
+		}, options);
 		this.attributes = {};
 		EventEmitter.call(this);
 	},
 
 	set: function(attr, value){
+		this.attributes[attr] = value;
 		this.emit("change:" + attr, {model: this, value: value});
 	},
 
 	get: function(attr){
-
+		return this.attributes[attr];
 	}
 };
 
 extend(MOP.ModelBase, EventEmitter);
+
+MOP.MsgModel = function(options){
+	this._initMsgModel(options);
+};
+MOP.MsgModel.prototype = {
+	_initMsgModel: function(options){
+		ModelBase.call(this, options);
+		this.options = mix({
+			default: {}
+		}, options);
+
+	}
+};
+extend(MOP.MsgModel, MOP.ModelBase);
+
+MOP.MsgStatusModel = function(){};
+MOP.MsgStatusModel.prototype = {};
 
 MOP.UIBase = function(options){
 	this._initUIBase(options);
@@ -86,13 +83,18 @@ MOP.MsgBar.prototype = {
 		bar.appendChild(bub);
 		bar.appendChild(barItems);
 		bar.appendChild(toggle);
-
+		var flashContainer = this.flashContainer = $c('div', 'flashcontainer');
+		flashContainer.style.cssText = 'width: 5px; height: 5px; bottom: -10px; position: absolute;';
+		bar.appendChild(flashContainer);
+		this.addFlash();	
 	},
 	initEvents: function(){
 		var self = this;
+		//toggle the bar status
 		$(this.toggle).click(function(){
 			$(self.barItems).toggle();
 			$(self.bub).toggle();
+			$(this).toggleClass('col');
 		});
 	},
 	open: function(){
@@ -101,7 +103,7 @@ MOP.MsgBar.prototype = {
 	close: function(){
 
 	},
-	setTotal: function(count){
+	setCount: function(count){
 		this.bubNumber.innerHTML = count;
 	},
 
@@ -111,6 +113,13 @@ MOP.MsgBar.prototype = {
 
 	addStatus: function(msgStatus){
 		this.barItems.appendChild(msgStatus.getDom());
+	},
+	addFlash: function(){
+		swfobj.embedSWF('new-msg.swf?',
+			'flashcontainer', 
+			'1',
+			'1',
+			'10');
 	}
 };
 
@@ -121,32 +130,33 @@ MOP.MsgStatus.prototype = {
 	_initMsgStatus: function(options){
 		this.options = mix({
 			iconId: 1,
-			title: ''
+			title: '',
+			smsType: '',
+			clearNotice: '',
+			checkInbox: ''
 		}, options);
-		this.templateHMLT = '<div class="title">' + 
-			'<?=this.title?>' + 
-			'<div class="fn_btns"><a>清除通知</a><a>收件箱</a></div>' +
-		'</div>' +
-		'<div class="content">' +
-			'<ul class="sms_list">' +
-			'</ul>' +
-		'</div>';
+		this.templateHMLT = document.getElementById('tmpl_popwin').innerHTML;
+		this.smslistTmpl = new Template(document.getElementById('tmpl_popwin_msg').innerHTML);
+
 		this.initUI();
+		this.panel = $(this.barItem);
 		this.initEvents();
+
 	},
 
 	initUI: function(){
 		var barItem = this.barItem = $c('li', null, 'i-' + this.options.iconId + ' bar_item');
 		var barBtn = this.barBtn = $c('a', null, 'btn_bar');
-		var bub = $c('div', null, 'bub');
+		var bub = this.bub = $c('div', null, 'bub');
 		bub.innerHTML = "<i></i>";
-		var bubNumber = $c('span');
+		var bubNumber = this.bubNumber = $c('span');
 		bub.appendChild(bubNumber);
 		var popwin = this.popwin = $c('div', null, 'popwin');
+		barBtn.appendChild(bub);
 		barItem.appendChild(barBtn);
 		barItem.appendChild(popwin);
 		var template = new Template(this.templateHMLT);
-		popwin.innerHTML = template.render({title: this.options.title});
+		popwin.innerHTML = template.render({title: this.options.title, clearNotice: this.options.clearNotice, checkInbox: this.options.checkInbox});
 	},
 
 	initEvents: function(){
@@ -170,7 +180,18 @@ MOP.MsgStatus.prototype = {
 		$(this.barBtn).removeClass('highlight');
 	},
 	setCount: function(count){
-		this.bubNumber = count;	
+		if(count > 99){
+			this.bubNumber.innerHTML = '99+';	
+		}else{
+			this.bubNumber.innerHTML = count;
+		}
+		if(count > 0){
+			$(this.bub).show();
+			this.activeBtn();
+		}else{
+			$(this.bub).hide();
+			this.disactiveBtn();
+		}
 	},
 	activeBtn: function(){
 		$(this.barBtn).addClass('active');
@@ -178,8 +199,15 @@ MOP.MsgStatus.prototype = {
 	disactiveBtn: function(){
 		$(this.barBtn).removeClass('active');
 	},
-	updateList: function(){
-
+	updateList: function(messages){
+		for(var i = 0, len = messages.length; i < len; i++){
+			if(!messages[i].senderName){
+				messages[i].senderName = '系统';
+			}
+			messages[i].text = msgtool.showFace(msgtool.showBoldAndUrl(messages[i].text));
+		}
+		this.setCount(messages.length);
+		this.panel.find('.sms_list').html(this.smslistTmpl.render(messages));
 	},
 	clearTarget: function(){},
 	clearAll: function(){},
@@ -193,39 +221,41 @@ MOP.MsgUI = function(){
 };
 MOP.MsgUI.prototype = {
 	_initMsgUI: function(options){
+		this.options = mix({
+			iframeurl: 'smscomet.html'
+		}, options);
+		this.origTitle = document.title;
 		this.msgBar = new MOP.MsgBar();
-		this.sPersonal = new MOP.MsgStatus({
+		this.status = {};
+		this.status.sms = new MOP.MsgStatus({
 			title: '个人信息',
 			iconId: 1
 		});
 
-		this.sFinance = new MOP.MsgStatus({
+		this.status.auction = new MOP.MsgStatus({
 			title: '财务通知',
 			iconId: 2
 		});
 	
-		this.sAuction = new MOP.MsgStatus({
+		this.status.finance = new MOP.MsgStatus({
 			title: '拍卖通知',
 			iconId: 3
 		});	
-		this.sTrade = new MOP.MsgStatus({
+		this.status.trade = new MOP.MsgStatus({
 			title: '交易通知',
 			iconId: 4
 		});	
-		this.sOther = new MOP.MsgStatus({
+		this.status.bbs = new MOP.MsgStatus({
 			title: '其他通知',
 			iconId: 5
 		});	
-		this.sIndentify = new MOP.MsgStatus({
+		this.status.jianding = new MOP.MsgStatus({
 			title: '鉴定通知',
 			iconId: 6
 		});	
-		this.msgBar.addStatus(this.sPersonal);
-		this.msgBar.addStatus(this.sFinance);
-		this.msgBar.addStatus(this.sAuction);
-		this.msgBar.addStatus(this.sTrade);
-		this.msgBar.addStatus(this.sOther);
-		this.msgBar.addStatus(this.sIndentify);
+		for(var key in this.status){
+			this.msgBar.addStatus(this.status[key]);
+		}
 		document.body.appendChild(this.msgBar.getDom());
 
 		this.chatbox = new MOP.ChatBox({
@@ -233,15 +263,70 @@ MOP.MsgUI.prototype = {
 		});
 
 		document.body.appendChild(this.chatbox.getDom());
+		this.addIfrmae();	
+	},
+	setScsms: function(){},
+	addIfrmae: function(){
+		try{
+			var ui = this;
+			var smsIframe = document.createElement('iframe');
+			var smsiframeInit = false;
+			smsIframe.onload = function(){
+				if(smsiframeInit){
+					return;
+				}
+				smsiframeInit = true;
+				
+				var iWindow = smsIframe.contentWindow;
+				iWindow.scsms.regist(ui);
+				ui.setScsms(iWindow.scsms);
+			};
+
+			smsIframe.onreadystatechange = function(){
+				if(this.readyState == 'complete'){
+					if(smsiframeInit){
+						return;
+					}
+					smsiframeInit = true;
+					
+					var iWindow = smsIframe.contentWindow;
+					iWindow.scsms.regist(ui);
+					ui.setScsms(iWindow.scsms);
+				}
+			};
+			smsIframe.charset = 'utf-8';
+			smsIframe.src = this.options.iframeurl;
+			smsIframe.width = 1;
+			smsIframe.height = 1;
+			smsIframe.style.position = 'absolute';
+			smsIframe.style.left = '-100px';
+			smsIframe.style.top = '-100px';
+			document.body.appendChild(smsIframe);
+		}catch(ex){}
 	},
 	//发送通知
-	notify: function(){
-
+	notify: function(messages, count){
+		this.msgBar.setCount(count);
+		for(var key in messages){
+			this.status[key].updateList(messages[key]);
+		}
 	},
 
-	playSound: function(){},
+	playSound: function(){
+		try{
+			var flashobj = document.getElementById('flashcontainer');
+			flashobj.Play();
 
-	updatePageTitle: function(){}
+		}catch(ex){}
+	},
+
+	updatePageTitle: function(totalCount){
+		if(totalCount < 1){
+			document.title = this.origTitle;
+		}else{
+			document.title = '(' + totalCount + ')' + this.origTitle;
+		}
+	}
 };
 //message on page chat box
 MOP.ChatBox = function(options){
@@ -291,7 +376,7 @@ MOP.ChatBox.prototype = {
 		});
 		var self = this;
 		this.chattab.on('show', function(e){
-			console.log(self.persons[e.index]);
+			//console.log(self.persons[e.index]);
 			self.setTitle(self.persons[e.index].senderName);
 		});
 	},

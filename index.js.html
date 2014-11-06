@@ -9,7 +9,7 @@
 <script type="text/html" id="tmpl_popwin">
 	<div class="title">
 		<?=this.title?>
-		<div class="fn_btns"><a>清除通知</a><a>收件箱</a></div>
+		<div class="fn_btns"><a href="<?=this.clearNotice?>">清除通知</a><a href="<?=this.checkInbox?>" target="_blank">收件箱</a></div>
 	</div>
 	<div class="content">
 		<ul class="sms_list">
@@ -54,6 +54,14 @@
 		</div>
 	</div>
 	<div class="btnbox"><a class="ico history"></a></div>
+</script>
+<script type="text/html" id="tmpl_popwin_msg">
+	<?for(var i = 0, len = this.length; i < len; i++){?>
+	<li>
+		<b class="username"><?=this[i].senderName?></b><span class="date"><?=this[i].sendTime?></span>
+		<p><?=this[i].text?></p>
+	</li>
+	<?}?>
 </script>
 <script type="text/javascript" src="core.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
