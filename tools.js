@@ -69,6 +69,17 @@ var camel2Dash = function(str){
 	});
 };
 
+//array enhance
+
+var indexOf = function(array, element){
+	for(var i = 0, len = array.length; i < len; i++){
+		if(array[i] === element){
+			return i;
+		}
+	}
+	return -1;
+}
+
 var eles = {
 	div: document.createElement('div'),
 	ul: document.createElement('ul'),
