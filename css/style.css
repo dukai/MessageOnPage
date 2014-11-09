@@ -262,11 +262,12 @@ img {
 .msg-bar ul.bar_items li.bar_item .popwin .content span {
   color: #ccc;
 }
-.msg-bar ul.bar_items li.bar_item .popwin .content p {
+.msg-bar ul.bar_items li.bar_item .popwin .content p.msg_txt {
   background: #eae8e1;
   line-height: 20px;
   padding: 4px 4px;
   border-radius: 3px;
+  cursor: pointer;
 }
 .msg-bar .toggle {
   width: 18px;
