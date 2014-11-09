@@ -9,11 +9,12 @@
 <script type="text/html" id="tmpl_popwin">
 	<div class="title">
 		<?=this.title?>
-		<div class="fn_btns"><a href="<?=this.clearNotice?>">清除通知</a><a href="<?=this.checkInbox?>" target="_blank">收件箱</a></div>
+		<div class="fn_btns"><a href="<?=this.clearNotice?>" class="ignore-ajax">清除通知</a><a href="<?=this.checkInbox?>" target="_blank">收件箱</a></div>
 	</div>
 	<div class="content">
 		<ul class="sms_list">
 		</ul>
+		<div class="ad_view"></div>
 	</div>
 </script>
 <script type="text/html" id="tmpl_fn_bar">
@@ -56,10 +57,20 @@
 	<div class="btnbox"><a class="ico history"></a></div>
 </script>
 <script type="text/html" id="tmpl_popwin_msg">
-	<?for(var i = 0, len = this.length; i < len; i++){?>
-	<li>
-		<b class="username"><?=this[i].senderName?></b><span class="date"><?=this[i].sendTime?></span>
-		<p><?=this[i].text?></p>
+	<?if(this.messages.length == 0){?>
+		<a href="<?=this.checkInbox?>" class="no-new" target="_blank">暂无新通知，点击进入收件箱</a>
+	<?}?>
+
+	<?for(var i = 0, len = this.messages.length; i < len; i++){
+	if(this.messages[i].type == 0){
+		var url = 'http://member.sssc.cn/message/m?session_id=' + this.messages[i].sessionId;
+	}else{
+		var url = 'http://member.sssc.cn/message/system?type=' + this.messages[i].type;
+	}
+	?>
+	<li class="" sessionid="<?=this.messages[i].sessionId?>">
+		<b class="username"><?=this.messages[i].senderName?></b><span class="date"><?=this.messages[i].sendTime?></span>
+		<p class="msg_txt" url="<?=url?>" type="<?=this.messages[i].type?>" sessionid="<?=this.messages[i].sessionId?>" sendname="<?=this.messages[i].senderName?>" senduid="<?=this.messages[i].senderUid?>"><?=this.messages[i].text?></p>
 	</li>
 	<?}?>
 </script>
@@ -74,7 +85,9 @@
 <script type="text/javascript">
 use(function(require){
 var MOP = require('./MessageBar');
-var msgUI = new MOP.MsgUI();
+var msgUI = new MOP.MsgUI({
+	model: new MOP.MsgModel()
+});
 msgUI.chatbox.addChatPerson({senderName: 'Bill'});
 msgUI.chatbox.addChatPerson({senderName: 'DK'});
 });
