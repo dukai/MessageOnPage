@@ -1,8 +1,9 @@
 /**
-SSSC MESSAGE ON PAGE
-Author DK
-DATE: 2014-10-20
-*/
+ * SSSC MESSAGE ON PAGE
+ * include two important components: chat and message bar
+ * Author DK
+ *DATE: 2014-10-20
+ */
 define(function(require, exports, module){
 
 var Template = require('./js/template');
@@ -43,7 +44,43 @@ MOP.MsgModel.prototype = {
 		this.options = mix({
 			default: {}
 		}, options);
+		this.chatSessions = {};
+		this.chatSessionsArray = [];
+	},
 
+	sessionExist: function(sessionId){
+		return !!this.chatSessions[sessionId];
+	},
+
+	getSessionLength: function(){
+		return this.chatSessionsArray.length;
+	},
+
+	addSession: function(userInfo){
+		this.chatSessions[userInfo.sessionId] = userInfo;
+		this.chatSessionsArray.push(userInfo.sessionId);	
+		this.emit('session:add', {
+			sessionsArray: this.chatSessionsArray,
+			sessions: this.chatSessions,
+			session: userInfo
+		})
+	},
+
+	removeSession: function(sessionId){
+		delete this.chatSessions[sessionId];
+		var index = indexOf(this.chatSessionsArray, sessionId);
+		this.chatSessionsArray.splice(index, 1);
+		this.emit('session:delete', {
+			sessionsArray: this.chatSessionsArray,
+			sessions: this.chatSessions 
+		})
+	},
+
+	clearAll: function(){
+
+	},
+	clearTarget: function(){
+		
 	}
 };
 extend(MOP.MsgModel, MOP.ModelBase);
@@ -55,18 +92,36 @@ MOP.UIBase = function(options){
 	this._initUIBase(options);
 };
 MOP.UIBase.prototype = {
-	_initUIBase: function(){
-
+	_initUIBase: function(options){
+		this.options = mix({}, options);
+		EventEmitter.call(this);	
 	},
 	initUI: function(){}
 };
+extend(MOP.UIBase, EventEmitter);
+
+MOP.SMS_TYPE = {
+	'0' : {title: '个人消息', id: 'sms'},
+	'-1': {title: '拍卖通知', id: 'auction'},
+	'-2': {title: '财务通知', id: 'finance'},
+	'-3': {title: '交易通知', id: 'trade'},
+	'-4': {title: '鉴定通知', id: 'jianding'},
+	'-5': {title: '其他通知', id: 'bbs'},
+	'-127': {title: '其他通知', id: 'bbs'}
+}
+
+/**
+ * Msg bar
+ */
 
 MOP.MsgBar = function(options){
 	this._initMsgBar(options);	
 };
 MOP.MsgBar.prototype = {
 	_initMsgBar: function(options){
-		this.options = mix({}, options);
+		this.options = mix({
+			swfurl: 'new-msg.swf?'
+		}, options);
 		this.initUI();
 		this.panel = $(this.bar);
 		this.initEvents();
@@ -104,7 +159,11 @@ MOP.MsgBar.prototype = {
 
 	},
 	setCount: function(count){
-		this.bubNumber.innerHTML = count;
+		var displayCount = count;
+		if(count > 99){
+			displayCount = '99+';
+		}
+		this.bubNumber.innerHTML = displayCount;
 	},
 
 	getDom: function(){
@@ -115,7 +174,7 @@ MOP.MsgBar.prototype = {
 		this.barItems.appendChild(msgStatus.getDom());
 	},
 	addFlash: function(){
-		swfobj.embedSWF('new-msg.swf?',
+		swfobj.embedSWF(this.options.swfurl,
 			'flashcontainer', 
 			'1',
 			'1',
@@ -128,20 +187,20 @@ MOP.MsgStatus = function(options){
 };
 MOP.MsgStatus.prototype = {
 	_initMsgStatus: function(options){
-		this.options = mix({
+		MOP.UIBase.call(this, mix({
 			iconId: 1,
 			title: '',
 			smsType: '',
 			clearNotice: '',
 			checkInbox: ''
-		}, options);
+		}, options));
 		this.templateHMLT = document.getElementById('tmpl_popwin').innerHTML;
 		this.smslistTmpl = new Template(document.getElementById('tmpl_popwin_msg').innerHTML);
 
 		this.initUI();
 		this.panel = $(this.barItem);
 		this.initEvents();
-
+		this.updateList([]);
 	},
 
 	initUI: function(){
@@ -161,15 +220,71 @@ MOP.MsgStatus.prototype = {
 
 	initEvents: function(){
 		var self = this;
+		//打开窗口
 		$(this.barItem).click(function(){
 			self.openBox();
 		});
+		//自动隐藏
 		$(document).click(function(e){
 			if(e.target != self.popwin && !$.contains(self.popwin, e.target) && e.target != self.barBtn && !$.contains(self.barBtn, e.target)){
 				self.closeBox();
 			}
 		});
+		//忽略所有信息
+		this.panel.delegate('.ignore-ajax', 'click', function(e){
+			e.preventDefault();
+			self.updateList([]);
+			self.showAdView();
+			var url = this.href;
+			self.emit('ignore', {});
+			try{
+				$.ajax({
+					type: 'get',
+					dataType: 'script',
+					url : url + "&t=" + Math.random(),
+					success: function(data, status, xhr){
+					},
+					error: function(){}
+				});
+
+				if(/type=-5/.test(url)){
+					$.ajax({
+						type: 'get',
+						dataType: 'script',
+						url: url.replace('-5', '-127') + '&t=' + Math.random(),
+						success: function(){},
+						error: function(){}
+					})
+				}
+			}catch(ex){}
+		});
+		this.panel.delegate('.msg_txt', 'click', function(e){
+			//message text click event	
+			//console.log(this.getAttribute('type'));
+			if(this.getAttribute('type') == '0'){
+				//个人信息
+				//显示聊天窗口，判断当前聊天的人数，最多支持3个人
+				var sessionId = this.getAttribute('sessionid'),
+					senduid = this.getAttribute('senduid'),
+					sendname = this.getAttribute('sendname'),
+					referLink = this.getAttribute('url');
+				var userinfo = {
+					sessionId: sessionId,
+					senderUid: senduid,
+					senderName: sendname,
+					referLink: referLink
+				};
+				self.options.model.addSession(userinfo);
+
+			}else{
+				//其他信息
+				window.open(this.getAttribute('url'));
+			}
+		});
 	},
+
+	showAdView: function(){},
+	hideAdView: function(){},
 
 	openBox: function(){
 		$(this.popwin).show('normal');
@@ -191,6 +306,7 @@ MOP.MsgStatus.prototype = {
 		}else{
 			$(this.bub).hide();
 			this.disactiveBtn();
+			this.hideAdView();
 		}
 	},
 	activeBtn: function(){
@@ -207,7 +323,7 @@ MOP.MsgStatus.prototype = {
 			messages[i].text = msgtool.showFace(msgtool.showBoldAndUrl(messages[i].text));
 		}
 		this.setCount(messages.length);
-		this.panel.find('.sms_list').html(this.smslistTmpl.render(messages));
+		this.panel.find('.sms_list').html(this.smslistTmpl.render({checkInbox: this.options.checkInbox,messages:messages}));
 	},
 	clearTarget: function(){},
 	clearAll: function(){},
@@ -215,43 +331,51 @@ MOP.MsgStatus.prototype = {
 		return this.barItem;
 	}
 };
+extend(MOP.MsgStatus, MOP.UIBase);
 //message on page UI
-MOP.MsgUI = function(){
-	this._initMsgUI();
+MOP.MsgUI = function(options){
+	this._initMsgUI(options);
 };
 MOP.MsgUI.prototype = {
 	_initMsgUI: function(options){
 		this.options = mix({
-			iframeurl: 'smscomet.html'
+			iframeurl: 'smscomet.html',
+			model: null
 		}, options);
 		this.origTitle = document.title;
 		this.msgBar = new MOP.MsgBar();
 		this.status = {};
 		this.status.sms = new MOP.MsgStatus({
 			title: '个人信息',
-			iconId: 1
+			iconId: 1,
+			model: this.options.model
 		});
 
 		this.status.auction = new MOP.MsgStatus({
 			title: '财务通知',
-			iconId: 2
+			iconId: 2,
+			model: this.options.model
 		});
 	
 		this.status.finance = new MOP.MsgStatus({
 			title: '拍卖通知',
-			iconId: 3
+			iconId: 3,
+			model: this.options.model
 		});	
 		this.status.trade = new MOP.MsgStatus({
 			title: '交易通知',
-			iconId: 4
+			iconId: 4,
+			model: this.options.model
 		});	
 		this.status.bbs = new MOP.MsgStatus({
 			title: '其他通知',
-			iconId: 5
+			iconId: 5,
+			model: this.options.model
 		});	
 		this.status.jianding = new MOP.MsgStatus({
 			title: '鉴定通知',
-			iconId: 6
+			iconId: 6,
+			model: this.options.model
 		});	
 		for(var key in this.status){
 			this.msgBar.addStatus(this.status[key]);
@@ -259,7 +383,8 @@ MOP.MsgUI.prototype = {
 		document.body.appendChild(this.msgBar.getDom());
 
 		this.chatbox = new MOP.ChatBox({
-			fnBarTemplate: document.getElementById('tmpl_fn_bar').innerHTML
+			fnBarTemplate: document.getElementById('tmpl_fn_bar').innerHTML,
+			model: this.options.model
 		});
 
 		document.body.appendChild(this.chatbox.getDom());
@@ -315,7 +440,7 @@ MOP.MsgUI.prototype = {
 	playSound: function(){
 		try{
 			var flashobj = document.getElementById('flashcontainer');
-			flashobj.Play();
+			//flashobj.Play();
 
 		}catch(ex){}
 	},
@@ -355,7 +480,8 @@ MOP.ChatBox.prototype = {
 				["示爱", "[/sa]", "sa.gif"],		["心", "[/xin]", "xin.gif"],		["心碎", "[/xs]", "xs.gif"],	["闪电", "[/shd]", "shd.gif"],	["炸弹", "[/zhd]", "zhd.gif"],
 				["猪头", "[/zt]", "zt.gif"],		["瓢虫", "[/pch]", "pch.gif"],		["便便", "[/bb]", "bb.gif"],	["太阳", "[/ty]", "ty.gif"],	["月亮", "[/yl]", "yl.gif"],
 				["礼物", "[/lw]", "lw.gif"],		["拥抱", "[/yb]", "yb.gif"],		["足球", "[/zq]", "zq.gif"],	["篮球", "[/lq]", "lq.gif"],	["乒乓", "[/pp]", "pp.gif"]
-			]
+			],
+			model: null
 		}, options);	
 
 		this.initUI();
@@ -450,6 +576,9 @@ MOP.ChatBox.prototype = {
 			$(this.parentNode).remove();	
 			self.chattab.buildTabStatus();
 		});
+		this.options.model.on('session:add', function(e){
+			self.addChatPerson(e.session);		
+		})
 	},
 	//person {senderName: '', senderUid: ''}
 	addChatPerson: function(person){
