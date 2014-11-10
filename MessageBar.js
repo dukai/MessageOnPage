@@ -40,7 +40,7 @@ MOP.MsgModel = function(options){
 };
 MOP.MsgModel.prototype = {
 	_initMsgModel: function(options){
-		ModelBase.call(this, options);
+		MOP.ModelBase.call(this, options);
 		this.options = mix({
 			default: {}
 		}, options);
@@ -70,6 +70,16 @@ MOP.MsgModel.prototype = {
 		delete this.chatSessions[sessionId];
 		var index = indexOf(this.chatSessionsArray, sessionId);
 		this.chatSessionsArray.splice(index, 1);
+		this.emit('session:delete', {
+			sessionsArray: this.chatSessionsArray,
+			sessions: this.chatSessions 
+		});
+	},
+
+	removeSessionByOrder: function(pointer){
+		var sessionId = this.chatSessionsArray[pointer];
+		delete this.chatSessions[sessionId];
+		this.chatSessionsArray.splice(pointer, 1);
 		this.emit('session:delete', {
 			sessionsArray: this.chatSessionsArray,
 			sessions: this.chatSessions 
@@ -274,7 +284,18 @@ MOP.MsgStatus.prototype = {
 					senderName: sendname,
 					referLink: referLink
 				};
+				var model = self.options.model;
+				if(model.sessionExist(sessionId)){
+					alert('已存在会话,无法添加');
+					return;
+				}
+				if(model.getSessionLength() >=3){
+					alert('聊天人数已达到上限');
+					return;
+				}
+
 				self.options.model.addSession(userinfo);
+				//清除本会话下面的内容
 
 			}else{
 				//其他信息
@@ -512,7 +533,7 @@ MOP.ChatBox.prototype = {
 		var t1 = document.createTextNode('正在与');
 		var t2 = document.createTextNode('聊天');
 		var targetPer = this.targetPer = $c('span');
-		var btnClose = $c('a', null, 'btn_close');
+		var btnClose = this.btnClose = $c('a', null, 'btn_close');
 		title.appendChild(t1);
 		title.appendChild(targetPer);
 		title.appendChild(t2);
@@ -571,19 +592,35 @@ MOP.ChatBox.prototype = {
 		$(this.btnSend).click(function(){
 			//handle send message event
 		});
+		//tab close btn
 		$(this.toUserList).delegate('li i.ico.close', 'click', function(){
-			$(self.content).find('>ul').eq(this.parentNode.tabindex).remove();
+			var pointer = this.parentNode.tabindex;
+			$(self.content).find('>ul').eq(pointer).remove();
 			$(this.parentNode).remove();	
 			self.chattab.buildTabStatus();
+			self.options.model.removeSessionByOrder(pointer);
+			if(self.options.model.getSessionLength() == 0){
+				self.hide();
+			}
+			console.log(self.options.model.chatSessionsArray);
 		});
+		//添加聊天对象事件
 		this.options.model.on('session:add', function(e){
+			if(self.options.model.getSessionLength() == 1){
+				self.show();
+			}
 			self.addChatPerson(e.session);		
-		})
+		});
+		$(this.btnClose).click(function(){
+			//TODO: 是否需要删除所有内容
+			this.hide();
+		});
 	},
 	//person {senderName: '', senderUid: ''}
 	addChatPerson: function(person){
 		this.persons.push(person);
 		var li = $c('li', null, '');
+		li.sessionid = person.sessionId;
 		li.innerHTML = '<span>' + person.senderName + '</span><i class="ico close">x</i>';
 		this.toUserList.appendChild(li);
 		var msglist = $c('ul');
@@ -597,6 +634,14 @@ MOP.ChatBox.prototype = {
 	addText: function(value){
 		this.msgTextarea.value += value;
 		this.msgTextarea.focus();
+	},
+
+	show: function(){
+		$(this.chatBox).show();
+	},
+
+	hide: function(){
+		$(this.chatBox).hide();
 	},
 
 	getDom: function(){
@@ -636,7 +681,7 @@ MOP.SimpleTab.prototype = {
 			self.total++;
 		});
 		this.panel.find(this.options.content).hide();
-		this.show(this.total - 1);
+		(this.total > 0) && this.show(this.total - 1);
 	},
 	initEvents: function(){
 		var self = this;
