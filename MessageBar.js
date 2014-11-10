@@ -45,7 +45,6 @@ MOP.ModelBase.prototype = {
 			default: {}
 		}, options);
 		this.attributes = mix({}, this.options.default);
-		console.log(this.attributes);
 		EventEmitter.call(this);
 	},
 
@@ -725,22 +724,28 @@ MOP.ChatBox.prototype = {
 			self.addChatPerson(e.session);		
 		});
         this.model.on('load:message', function(e){
-            self.sessions[e.messages.sessionId].list.innerHTML = "加载完成";
+            var sessionId = e.messages.sessionId;
+            self.sessions[sessionId].list.innerHTML = "加载完成";
             var tmpl = new Template(document.getElementById('tmpl_chat_item').innerHTML);
-            self.sessions[e.messages.sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid')});
-            self.model.set("lastMessageId_" + e.messages.sessionId, e.messages.datas[e.messages.datas.length - 1].id);
+            self.sessions[sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid')});
+            self.model.set("lastMessageId_" + sessionId, e.messages.datas[e.messages.datas.length - 1].id);
+            self.scrollToBottom();
         });
         this.model.on('chat:message', function(e){
             var tmpl = new Template(document.getElementById('tmpl_chat_item_per').innerHTML);
             for(var key in e.messages){
                 self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid')});
+                self.scrollToBottom();
             }
         });
 		$(this.btnClose).click(function(){
-			//TODO: 是否需要删除所有内容
 			self.hide();
 		});
 	},
+    scrollToBottom: function (list) {
+        //TODO: to be completed
+        this.content.scrollTop = this.content.scrollHeight;
+    },
 	//person {senderName: '', senderUid: ''}
 	addChatPerson: function(person){
 		this.persons.push(person);
