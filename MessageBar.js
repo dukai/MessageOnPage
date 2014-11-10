@@ -10,6 +10,23 @@ var Template = require('./js/template');
 var swfobj = require('./js/swfobject');
 var msgtool = require('./js/msgtool');
 var MOP = {};
+/**
+ * SSSC SMS Const
+ */
+
+MOP.SMS_DOMAIN = "localhost";
+
+MOP.SMS_TYPE = {
+	'0' : {title: '个人消息', id: 'sms'},
+	'-1': {title: '拍卖通知', id: 'auction'},
+	'-2': {title: '财务通知', id: 'finance'},
+	'-3': {title: '交易通知', id: 'trade'},
+	'-4': {title: '鉴定通知', id: 'jianding'},
+	'-5': {title: '其他通知', id: 'bbs'},
+	'-127': {title: '其他通知', id: 'bbs'}
+};
+
+
 MOP.ModelBase = function(options){
 	this._initModelBase(options);
 };
@@ -91,6 +108,9 @@ MOP.MsgModel.prototype = {
 	},
 	clearTarget: function(){
 		
+	},
+	clearSession: function(sessionId){
+		$.get('http://' + MOP.SMS_DOMAIN + '/n/clear?t='+Math.random()+'&sid=' + sessionId, function(){}, 'script');
 	}
 };
 extend(MOP.MsgModel, MOP.ModelBase);
@@ -110,15 +130,7 @@ MOP.UIBase.prototype = {
 };
 extend(MOP.UIBase, EventEmitter);
 
-MOP.SMS_TYPE = {
-	'0' : {title: '个人消息', id: 'sms'},
-	'-1': {title: '拍卖通知', id: 'auction'},
-	'-2': {title: '财务通知', id: 'finance'},
-	'-3': {title: '交易通知', id: 'trade'},
-	'-4': {title: '鉴定通知', id: 'jianding'},
-	'-5': {title: '其他通知', id: 'bbs'},
-	'-127': {title: '其他通知', id: 'bbs'}
-}
+
 
 /**
  * Msg bar
@@ -296,11 +308,14 @@ MOP.MsgStatus.prototype = {
 
 				self.options.model.addSession(userinfo);
 				//清除本会话下面的内容
-
+				self.options.model.clearSession(sessionId);
+				self.panel.find('.sms_list li[sessionid="' + sessionId + '"]').remove();
 			}else{
 				//其他信息
 				window.open(this.getAttribute('url'));
 			}
+			e.preventDefault();
+			e.stopPropagation();
 		});
 	},
 
@@ -613,7 +628,7 @@ MOP.ChatBox.prototype = {
 		});
 		$(this.btnClose).click(function(){
 			//TODO: 是否需要删除所有内容
-			this.hide();
+			self.hide();
 		});
 	},
 	//person {senderName: '', senderUid: ''}
