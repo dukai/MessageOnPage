@@ -16,7 +16,7 @@ var MOP = {};
 
 MOP.SMS_DOMAIN = "localhost";
 
-MOP.SMS_TYPE = {
+MOP.SMS_TYPE_ID = {
 	'0' : {title: '个人消息', id: 'sms'},
 	'-1': {title: '拍卖通知', id: 'auction'},
 	'-2': {title: '财务通知', id: 'finance'},
@@ -24,6 +24,14 @@ MOP.SMS_TYPE = {
 	'-4': {title: '鉴定通知', id: 'jianding'},
 	'-5': {title: '其他通知', id: 'bbs'},
 	'-127': {title: '其他通知', id: 'bbs'}
+};
+MOP.SMS_TYPE = {
+	'sms': 0,
+	'auction': -1,
+	'finance': -2,
+	'trade': -3,
+	'jianding': -4,
+	'bbs': -5
 };
 
 
@@ -36,7 +44,8 @@ MOP.ModelBase.prototype = {
 		this.options = mix({
 			default: {}
 		}, options);
-		this.attributes = {};
+		this.attributes = mix({}, this.options.default);
+		console.log(this.attributes);
 		EventEmitter.call(this);
 	},
 
@@ -74,13 +83,30 @@ MOP.MsgModel.prototype = {
 	},
 
 	addSession: function(userInfo){
-		this.chatSessions[userInfo.sessionId] = userInfo;
-		this.chatSessionsArray.push(userInfo.sessionId);	
-		this.emit('session:add', {
-			sessionsArray: this.chatSessionsArray,
-			sessions: this.chatSessions,
-			session: userInfo
-		})
+		if(userInfo.sessionId){
+			this.chatSessions[userInfo.sessionId] = userInfo;
+			this.chatSessionsArray.push(userInfo.sessionId);	
+			this.emit('session:add', {
+				sessionsArray: this.chatSessionsArray,
+				sessions: this.chatSessions,
+				session: userInfo
+			});
+			this.readMessageHistory(userInfo);
+		}else{
+			var self = this;
+			this.readMessageHistory(userInfo, function(data){
+				userInfo.sessionId = data.sessionId;
+				this.chatSessions[userInfo.sessionId] = userInfo;
+				this.chatSessionsArray.push(userInfo.sessionId);	
+				this.emit('session:add', {
+					sessionsArray: this.chatSessionsArray,
+					sessions: this.chatSessions,
+					session: userInfo
+				});
+			});
+		}
+		
+		
 	},
 
 	removeSession: function(sessionId){
@@ -101,6 +127,52 @@ MOP.MsgModel.prototype = {
 			sessionsArray: this.chatSessionsArray,
 			sessions: this.chatSessions 
 		})
+	},
+
+	readMessageHistory: function(userInfo, fn){
+		var self = this;
+		$.ajax({
+			dataType: 'jsonp',
+			url: 'http://member.sssc.cn/message/ajax-get-msg?session_id=&page=1&begin_id=0&receiverIds=' + userInfo.senderUid + '&7658615395172941&callback=?',
+			method: 'get',
+			success: function(data){
+				fn && fn(data);
+				self.emit('load:message', {
+					messages: data,
+					userInfo: userInfo
+				});
+			},
+			error: function(){}
+		});
+	},
+	setMessage: function(key, value){
+		if(key == 'sms'){
+			//process chat window messages
+			var msgs = [];
+			var exCount = 0;
+            var chatMsgs = {};
+			for(var i = 0, len = value.length; i < len; i++){
+				if(this.sessionExist(value[i].sessionId)){
+                    if(true || this.get('lastMessageId_' + value[i].sessionId) < value[i].id){
+                        chatMsgs[value[i].sessionId] || (chatMsgs[value[i].sessionId] = []);
+                        chatMsgs[value[i].sessionId].push(value[i]);
+                        this.set('lastMessageId_' + value[i].id);
+                    }
+					exCount++;
+				}else{
+					msgs.push(value[i]);
+				}
+
+			}
+            this.emit('chat:message', {
+                model: this,
+                messages: chatMsgs
+            })
+			this.set('sms', msgs);
+			this.set('totalCount', this.get('totalCount') - exCount);
+		}else{
+			this.set(key, value);
+		}
 	},
 
 	clearAll: function(){
@@ -124,6 +196,7 @@ MOP.UIBase = function(options){
 MOP.UIBase.prototype = {
 	_initUIBase: function(options){
 		this.options = mix({}, options);
+        this.model = this.options.model;
 		EventEmitter.call(this);	
 	},
 	initUI: function(){}
@@ -141,9 +214,9 @@ MOP.MsgBar = function(options){
 };
 MOP.MsgBar.prototype = {
 	_initMsgBar: function(options){
-		this.options = mix({
+		MOP.UIBase.call(this, mix({
 			swfurl: 'new-msg.swf?'
-		}, options);
+		}, options));
 		this.initUI();
 		this.panel = $(this.bar);
 		this.initEvents();
@@ -172,6 +245,9 @@ MOP.MsgBar.prototype = {
 			$(self.barItems).toggle();
 			$(self.bub).toggle();
 			$(this).toggleClass('col');
+		});
+		this.options.model.on('change:totalCount', function(e){
+			self.setCount(e.value);
 		});
 	},
 	open: function(){
@@ -203,6 +279,7 @@ MOP.MsgBar.prototype = {
 			'10');
 	}
 };
+extend(MOP.MsgBar, MOP.UIBase);
 
 MOP.MsgStatus = function(options){
 	this._initMsgStatus(options);
@@ -309,13 +386,21 @@ MOP.MsgStatus.prototype = {
 				self.options.model.addSession(userinfo);
 				//清除本会话下面的内容
 				self.options.model.clearSession(sessionId);
+				var deletedCount = self.panel.find('.sms_list li[sessionid="' + sessionId + '"]').length;
+
 				self.panel.find('.sms_list li[sessionid="' + sessionId + '"]').remove();
+				self.setCount(self.panel.find('.sms_list>li').length);
+				self.options.model.set('totalCount', self.options.model.get('totalCount') - deletedCount);
 			}else{
 				//其他信息
 				window.open(this.getAttribute('url'));
 			}
 			e.preventDefault();
 			e.stopPropagation();
+		});
+
+		this.options.model.on('change:' + this.options.type, function(e){
+			self.updateList(e.value);
 		});
 	},
 
@@ -379,36 +464,44 @@ MOP.MsgUI.prototype = {
 			model: null
 		}, options);
 		this.origTitle = document.title;
-		this.msgBar = new MOP.MsgBar();
+		this.msgBar = new MOP.MsgBar({
+			model: this.options.model
+		});
 		this.status = {};
 		this.status.sms = new MOP.MsgStatus({
+			type: 'sms',
 			title: '个人信息',
 			iconId: 1,
 			model: this.options.model
 		});
 
-		this.status.auction = new MOP.MsgStatus({
+		this.status.finance = new MOP.MsgStatus({
+			type: 'finance',
 			title: '财务通知',
 			iconId: 2,
 			model: this.options.model
 		});
 	
-		this.status.finance = new MOP.MsgStatus({
+		this.status.auction = new MOP.MsgStatus({
+			type: 'auction',
 			title: '拍卖通知',
 			iconId: 3,
 			model: this.options.model
 		});	
 		this.status.trade = new MOP.MsgStatus({
+			type: 'trade',
 			title: '交易通知',
 			iconId: 4,
 			model: this.options.model
 		});	
 		this.status.bbs = new MOP.MsgStatus({
+			type: 'bbs',
 			title: '其他通知',
 			iconId: 5,
 			model: this.options.model
 		});	
 		this.status.jianding = new MOP.MsgStatus({
+			type: 'jianding',
 			title: '鉴定通知',
 			iconId: 6,
 			model: this.options.model
@@ -468,8 +561,11 @@ MOP.MsgUI.prototype = {
 	//发送通知
 	notify: function(messages, count){
 		this.msgBar.setCount(count);
+
 		for(var key in messages){
-			this.status[key].updateList(messages[key]);
+			//this.status[key].updateList(messages[key]);
+			this.options.model.setMessage(key, messages[key]);
+			this.options.model.set('totalCount', count);
 		}
 	},
 
@@ -495,7 +591,7 @@ MOP.ChatBox = function(options){
 };
 MOP.ChatBox.prototype = {
 	_initChatBox: function(options){
-		this.options = mix({
+		MOP.UIBase.call(this, mix({
 			fnBarTemplate: '',
 			faces: [
 				["强", "[/qiang]", "qiang.gif"],	["弱", "[/ruo]", "ruo.gif"],		["握手", "[/ws]", "ws.gif"],	["胜利", "[/shl]", "shl.gif"],	["抱拳", "[/bq]", "bq.gif"],
@@ -518,7 +614,7 @@ MOP.ChatBox.prototype = {
 				["礼物", "[/lw]", "lw.gif"],		["拥抱", "[/yb]", "yb.gif"],		["足球", "[/zq]", "zq.gif"],	["篮球", "[/lq]", "lq.gif"],	["乒乓", "[/pp]", "pp.gif"]
 			],
 			model: null
-		}, options);	
+		}, options));
 
 		this.initUI();
 		this.persons = [];
@@ -541,6 +637,8 @@ MOP.ChatBox.prototype = {
 			//console.log(self.persons[e.index]);
 			self.setTitle(self.persons[e.index].senderName);
 		});
+
+		this.sessions = {};
 	},
 	initUI: function(){
 		var chatBox = this.chatBox = $c('div', null, 'chatbox msgonpage');
@@ -620,12 +718,24 @@ MOP.ChatBox.prototype = {
 			console.log(self.options.model.chatSessionsArray);
 		});
 		//添加聊天对象事件
-		this.options.model.on('session:add', function(e){
+		this.model.on('session:add', function(e){
 			if(self.options.model.getSessionLength() == 1){
 				self.show();
 			}
 			self.addChatPerson(e.session);		
 		});
+        this.model.on('load:message', function(e){
+            self.sessions[e.messages.sessionId].list.innerHTML = "加载完成";
+            var tmpl = new Template(document.getElementById('tmpl_chat_item').innerHTML);
+            self.sessions[e.messages.sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid')});
+            self.model.set("lastMessageId_" + e.messages.sessionId, e.messages.datas[e.messages.datas.length - 1].id);
+        });
+        this.model.on('chat:message', function(e){
+            var tmpl = new Template(document.getElementById('tmpl_chat_item_per').innerHTML);
+            for(var key in e.messages){
+                self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid')});
+            }
+        });
 		$(this.btnClose).click(function(){
 			//TODO: 是否需要删除所有内容
 			self.hide();
@@ -639,9 +749,13 @@ MOP.ChatBox.prototype = {
 		li.innerHTML = '<span>' + person.senderName + '</span><i class="ico close">x</i>';
 		this.toUserList.appendChild(li);
 		var msglist = $c('ul');
-		msglist.innerHTML = person.senderName;
+		msglist.innerHTML = '消息记录读取中...';
 		this.content.appendChild(msglist);
 		this.chattab.buildTabStatus();
+
+		this.sessions[person.sessionId] = {
+			list: msglist
+		};
 	},
 	setTitle: function(value){
 		this.targetPer.innerHTML = value;
@@ -663,6 +777,7 @@ MOP.ChatBox.prototype = {
 		return this.chatBox;
 	}
 };
+extend(MOP.ChatBox, MOP.UIBase);
 
 MOP.SimpleTab = function(options){
 	this._initSimpleTab(options);	

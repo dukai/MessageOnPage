@@ -74,6 +74,61 @@
 	</li>
 	<?}?>
 </script>
+<script type="text/html" id="tmpl_chat_item">
+	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
+	<li class="<?=(this.messages[i].sender_uid == this.uid?'me': 'opp')?>">
+		<div class="cite"><em><?=this.messages[i].sender_username?></em><cite><?=this.messages[i].created_time?></cite></div>
+		<div class="msgcontent">
+			<div class="msgtxt"><div class="inset"><?=this.messages[i].message?></div></div>
+			<?if(this.messages[i].images != ''){?>
+			<div class="msgimg">
+				<div class="inset">
+					<a href="<?=this.messages[i].imageUrls[0].orig?>" target="_blank"><img src="<?=this.messages[i].imageUrls[0].thumb?>"/></a>
+				</div>
+			</div>
+			<?}?>
+			<?if(false){?>
+			<div class="goods">
+				<div class="img"><img src="images/505695.jpg"></div>
+				<div>
+					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>
+					<div>出品人：<a href="#">冰雪咖啡</a></div>
+					<div>价　格：<a href="#">120元</a></div>
+				</div>
+			</div>
+			<?}?>
+		</div>
+	</li>
+	<?}?>
+</script>
+
+<script type="text/html" id="tmpl_chat_item_per">
+	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
+	<li class="<?=(this.messages[i].sender_uid == this.uid?'me': 'opp')?>">
+		<div class="cite"><em><?=this.messages[i].senderName?></em><cite><?=this.messages[i].sendTime?></cite></div>
+		<div class="msgcontent">
+			<div class="msgtxt"><div class="inset"><?=this.messages[i].text?></div></div>
+			<?if(this.messages[i].images != ''){?>
+			<div class="msgimg">
+				<div class="inset">
+					<a href="<?= ('http://img.scimg.cn/userupload/messageimages/orig/' + this.messages[i].images)?>" target="_blank"><img src="<?=('http://img.scimg.cn/userupload/messageimages/80x80/' + this.messages[i].images)?>"/></a>
+				</div>
+			</div>
+			<?}?>
+			<?if(false){?>
+			<div class="goods">
+				<div class="img"><img src="images/505695.jpg"></div>
+				<div>
+					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>
+					<div>出品人：<a href="#">冰雪咖啡</a></div>
+					<div>价　格：<a href="#">120元</a></div>
+				</div>
+			</div>
+			<?}?>
+		</div>
+	</li>
+	<?}?>
+</script>
 <script type="text/javascript" src="core.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/msgtool.js"></script>
@@ -86,7 +141,9 @@
 use(function(require){
 var MOP = require('./MessageBar');
 var msgUI = new MOP.MsgUI({
-	model: new MOP.MsgModel()
+	model: new MOP.MsgModel({default: {
+		uid: 129331
+	}})
 });
 });
 </script>
