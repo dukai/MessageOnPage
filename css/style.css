@@ -586,6 +586,10 @@ img {
 }
 .chatbox .footer ul li:hover {
   background-color: #767366;
+  color: #fff;
+}
+.chatbox .footer ul li.highlight {
+  border-bottom: 2px solid #bb9646;
 }
 .chatbox .footer .btn_send {
   width: 70px;

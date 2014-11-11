@@ -152,6 +152,7 @@ MOP.MsgModel.prototype = {
             var chatMsgs = {};
 			for(var i = 0, len = value.length; i < len; i++){
 				if(this.sessionExist(value[i].sessionId)){
+                    //TODO: to be deleted
                     if(true || this.get('lastMessageId_' + value[i].sessionId) < value[i].id){
                         chatMsgs[value[i].sessionId] || (chatMsgs[value[i].sessionId] = []);
                         chatMsgs[value[i].sessionId].push(value[i]);
@@ -165,7 +166,8 @@ MOP.MsgModel.prototype = {
 			}
             this.emit('chat:message', {
                 model: this,
-                messages: chatMsgs
+                messages: chatMsgs,
+                sessionsArray: this.chatSessionsArray
             })
 			this.set('sms', msgs);
 			this.set('totalCount', this.get('totalCount') - exCount);
@@ -736,6 +738,12 @@ MOP.ChatBox.prototype = {
             for(var key in e.messages){
                 self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid')});
                 self.scrollToBottom();
+                //TODO: high light the tab with unread message var key
+
+                var pointer = indexOf(e.sessionsArray, key);
+                if(!$(self.sessions[key].tab).hasClass('active')){
+                    $(self.sessions[key].tab).addClass('highlight');
+                }
             }
         });
 		$(this.btnClose).click(function(){
@@ -743,7 +751,6 @@ MOP.ChatBox.prototype = {
 		});
 	},
     scrollToBottom: function (list) {
-        //TODO: to be completed
         this.content.scrollTop = this.content.scrollHeight;
     },
 	//person {senderName: '', senderUid: ''}
@@ -759,7 +766,8 @@ MOP.ChatBox.prototype = {
 		this.chattab.buildTabStatus();
 
 		this.sessions[person.sessionId] = {
-			list: msglist
+			list: msglist,
+            tab: li
 		};
 	},
 	setTitle: function(value){
@@ -822,6 +830,7 @@ MOP.SimpleTab.prototype = {
 		var self = this;
 		this.panel.delegate(this.options.tab, this.options.fireevent, function(e){
 			var index = this.tabindex;
+            $(this).removeClass('highlight');
 			self.emit('tabselect', {index: index});
 			self.show(index);
 		})
