@@ -37,7 +37,7 @@ var msgtool = {
 		}
 		return txt;
 	},
-	showBoldAndUrl: function(txt){
+	showBold: function(txt){
 		if(typeof txt != 'string'){
 			return;
 		}
@@ -48,6 +48,20 @@ var msgtool = {
 				 .replace(/\[url=([\s\S]*?)\]\[\/url\]/ig,"$1")
 				 .replace(/\[url\]([\s\S]*?)\[\/url\]/ig,"$1")
 				 .replace(/\[url=([\s\S]*?)\]([\s\S]*?)\[\/url\]/ig,"$2");
+		return txt;
+	},
+
+	showBoldAndUrl: function(txt){
+		if(typeof txt != 'string'){
+			return;
+		}
+		txt = txt.replace(/\[[b]\]/ig,"<b>").replace(/\[\/[b]\]/ig,"</b>")
+				 .replace(/\[[i]\]/ig,"<i>").replace(/\[\/[i]\]/ig,"</i>")
+				 .replace(/\[color=(\w+)\]/ig,"<font color='$1'>").replace(/\[\/color\]/ig,"</font>")
+				 .replace(/\[img\]([\s\S]*?)\[\/img\]/ig,"<img src='$1' />")
+				 .replace(/\[url=([\s\S]*?)\]\[\/url\]/ig,"<a href='$1' target='_blank'>$1</a>")
+				 .replace(/\[url\]([\s\S]*?)\[\/url\]/ig,"<a href='$1' target='_blank'>$1</a>")
+				 .replace(/\[url=([\s\S]*?)\]([\s\S]*?)\[\/url\]/ig,"<a href='$1' target='_blank'>$2</a>");
 		return txt;
 	}
 };

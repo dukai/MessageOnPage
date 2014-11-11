@@ -453,7 +453,7 @@ MOP.MsgStatus.prototype = {
 			if(!messages[i].senderName){
 				messages[i].senderName = '系统';
 			}
-			messages[i].text = msgtool.showFace(msgtool.showBoldAndUrl(messages[i].text));
+			messages[i].text = msgtool.showFace(msgtool.showBold(messages[i].text));
 		}
 		this.setCount(messages.length);
 		this.panel.find('.sms_list').html(this.smslistTmpl.render({checkInbox: this.options.checkInbox,messages:messages}));
@@ -747,14 +747,18 @@ MOP.ChatBox.prototype = {
             var sessionId = e.messages.sessionId;
             self.sessions[sessionId].list.innerHTML = "加载完成";
             var tmpl = new Template(document.getElementById('tmpl_chat_item').innerHTML);
-            self.sessions[sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid')});
+            self.sessions[sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid'), process: function(txt){
+                    return msgtool.showBoldAndUrl(msgtool.showFace(txt));
+                }});
             self.model.set("lastMessageId_" + sessionId, e.messages.datas[e.messages.datas.length - 1].id);
             self.scrollToBottom();
         });
         this.model.on('chat:message', function(e){
             var tmpl = new Template(document.getElementById('tmpl_chat_item_per').innerHTML);
             for(var key in e.messages){
-                self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid')});
+                self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid'), process: function(txt){
+                    return msgtool.showBoldAndUrl(msgtool.showFace(txt));
+                }});
                 self.scrollToBottom();
                 //TODO: high light the tab with unread message var key
 
