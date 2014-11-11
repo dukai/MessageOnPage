@@ -67,7 +67,9 @@ MOP.MsgModel.prototype = {
 	_initMsgModel: function(options){
 		MOP.ModelBase.call(this, options);
 		this.options = mix({
-			default: {}
+			default: {
+                currentPointer: 0
+            }
 		}, options);
 		this.chatSessions = {};
 		this.chatSessionsArray = [];
@@ -104,8 +106,6 @@ MOP.MsgModel.prototype = {
 				});
 			});
 		}
-		
-		
 	},
 
 	removeSession: function(sessionId){
@@ -127,6 +127,17 @@ MOP.MsgModel.prototype = {
 			sessions: this.chatSessions 
 		})
 	},
+    getSession: function(index){
+        return this.chatSessions[this.chatSessionsArray[index]];
+    },
+    getCurrentSession: function(){
+        var index = this.get('currentPointer');
+        if(index !== undefined && index >= 0 && index < this.chatSessionsArray.length){
+            return this.getSession(index);
+        }else{
+            return this.getSession(this.chatSessionsArray.length - 1);
+        }
+    },
 
 	readMessageHistory: function(userInfo, fn){
 		var self = this;
@@ -620,7 +631,7 @@ MOP.ChatBox.prototype = {
 		this.initUI();
 		this.persons = [];
 		this.panel = $(this.chatBox);
-		this.initEvents();
+        this.sessions = {};
 		this.chattab = new MOP.SimpleTab({
 			container: this.chatBox,
 			tab: '.footer ul li',
@@ -633,13 +644,11 @@ MOP.ChatBox.prototype = {
 			content: 'ul li',
 			selectClass: 'active'
 		});
-		var self = this;
-		this.chattab.on('show', function(e){
-			//console.log(self.persons[e.index]);
-			self.setTitle(self.persons[e.index].senderName);
-		});
 
-		this.sessions = {};
+        this.initEvents();
+		var self = this;
+
+
 	},
 	initUI: function(){
 		var chatBox = this.chatBox = $c('div', null, 'chatbox msgonpage');
@@ -705,6 +714,10 @@ MOP.ChatBox.prototype = {
 
 		$(this.btnSend).click(function(){
 			//handle send message event
+            if($.trim(self.msgTextarea.value) == ''){
+                alert('回复内容不能为空');
+            }
+            console.log(self.model.getCurrentSession());
 		});
 		//tab close btn
 		$(this.toUserList).delegate('li i.ico.close', 'click', function(){
@@ -717,6 +730,11 @@ MOP.ChatBox.prototype = {
 				self.hide();
 			}
 			console.log(self.options.model.chatSessionsArray);
+		});
+        this.chattab.on('show', function(e){
+			//console.log(self.persons[e.index]);
+			self.setTitle(self.persons[e.index].senderName);
+            self.model.set('currentPointer', e.index);
 		});
 		//添加聊天对象事件
 		this.model.on('session:add', function(e){
