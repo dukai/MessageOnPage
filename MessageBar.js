@@ -167,7 +167,7 @@ MOP.MsgModel.prototype = {
                     if(true || this.get('lastMessageId_' + value[i].sessionId) < value[i].id){
                         chatMsgs[value[i].sessionId] || (chatMsgs[value[i].sessionId] = []);
                         chatMsgs[value[i].sessionId].push(value[i]);
-                        this.set('lastMessageId_' + value[i].id);
+                        this.set('lastMessageId_' + value[i].sessionId, value[i].id);
                     }
 					exCount++;
 				}else{
@@ -186,6 +186,59 @@ MOP.MsgModel.prototype = {
 			this.set(key, value);
 		}
 	},
+    // message {text: '', image: ''}
+    sendMessage: function (message) {
+        var self = this;
+        var session = this.getCurrentSession();
+        if(!session){
+            console.log('undefined chat user');
+            return;
+        }
+        //ajax send messages
+        var url = 'http://member.sssc.cn/message/ajax-send-msg?receiverName=' + session.senderName
+            + '&receivers=' + session.senderUid
+            + '&session_id=' + session.sessionId
+            + '&text=' + encodeURIComponent(message.text)
+            + '&callback=?';
+        if(message.image !== undefined && message.image != ''){
+            url += '&uploadedFiles[0]=' + message.image;
+        }
+
+        $.ajax({
+            dataType: 'jsonp',
+            method: 'get',
+            url: url,
+            success: function(data){
+                self.emit('sendcomplete:message', {model: this});
+                if(!data.success){
+                    alert(data.message);
+                    return;
+                }
+                var img = "";
+                if(data.images.length > 0){
+                    img = data.images[0].thumb.replace('http://img.scimg.cn/userupload/messageimages/80x80/', '');
+                }
+                var chatmsg = {
+                    senderUid: self.get('uid'),
+                    senderName: '我',
+                    text: data.text,
+                    images: img,
+                    sendTime: data.createdTime,
+                    id: data.messageId
+                };
+                self.set('lastMessageId_' + session.sessionId, data.messageId);
+
+                var messages = {};
+                messages[session.sessionId] = [chatmsg];
+                self.emit('chat:message', {
+                    model: self,
+                    messages: messages,
+                    sessionsArray: self.chatSessionsArray
+                });
+            },
+            error: function(){}
+        });
+    },
 
 	clearAll: function(){
 
@@ -307,6 +360,7 @@ MOP.MsgStatus.prototype = {
 		}, options));
 		this.templateHMLT = document.getElementById('tmpl_popwin').innerHTML;
 		this.smslistTmpl = new Template(document.getElementById('tmpl_popwin_msg').innerHTML);
+        this.active = false;
 
 		this.initUI();
 		this.panel = $(this.barItem);
@@ -337,8 +391,10 @@ MOP.MsgStatus.prototype = {
 		});
 		//自动隐藏
 		$(document).click(function(e){
+            //console.log(e.target);
 			if(e.target != self.popwin && !$.contains(self.popwin, e.target) && e.target != self.barBtn && !$.contains(self.barBtn, e.target)){
-				self.closeBox();
+                if(self.active)
+                    self.closeBox();
 			}
 		});
 		//忽略所有信息
@@ -420,12 +476,14 @@ MOP.MsgStatus.prototype = {
 	hideAdView: function(){},
 
 	openBox: function(){
-		$(this.popwin).show('normal');
+		$(this.popwin).show();
 		$(this.barBtn).addClass('highlight');
+        this.active = true;
 	},
 	closeBox: function(){
-		$(this.popwin).hide('fast');
+		$(this.popwin).hide();
 		$(this.barBtn).removeClass('highlight');
+        this.active = false;
 	},
 	setCount: function(count){
 		if(count > 99){
@@ -647,6 +705,7 @@ MOP.ChatBox.prototype = {
 
         this.initEvents();
 		var self = this;
+        //TODO: need to include the image uploader component
 
 
 	},
@@ -688,6 +747,7 @@ MOP.ChatBox.prototype = {
 	initEvents: function(){
 		var self = this;
 		self.lastPop = null;
+        /*
 		this.panel.find('.btnbox .ico').click(function(e){
 			if(self.lastPop != this && self.lastPop){
 				//self.panel.find('.btnbox .pop').hide();
@@ -698,6 +758,35 @@ MOP.ChatBox.prototype = {
 			$(this).toggleClass('active');
 			self.lastPop = this;
 		});
+		*/
+        this.panel.find('.fn_bar .btnbox .ico.phrase').click(function (e) {
+            if(self.lastPop != this && self.lastPop){
+				//self.panel.find('.btnbox .pop').hide();
+				$(self.lastPop.parentNode).find('.pop').hide();
+				$(self.lastPop).removeClass('active');
+			}
+			$(this.parentNode).find('.pop').toggle();
+			$(this).toggleClass('active');
+			self.lastPop = this;
+        });
+        this.panel.find('.fn_bar .btnbox .ico.smile').click(function (e) {
+            if(self.lastPop != this && self.lastPop){
+				//self.panel.find('.btnbox .pop').hide();
+				$(self.lastPop.parentNode).find('.pop').hide();
+				$(self.lastPop).removeClass('active');
+			}
+			$(this.parentNode).find('.pop').toggle();
+			$(this).toggleClass('active');
+			self.lastPop = this;
+        });
+        this.panel.find('.fn_bar .btnbox.uploadimg').hover(function(){
+            if($(this).find('.pop input').length == 0){
+                return;
+            }
+            $(this).find('.pop').show();
+        }, function(){
+            $(this).find('.pop').hide();
+        });
 		//表情事件
 		this.panel.find('.fn_bar .btnbox .pop.smile').delegate('ul span a', 'click',function(e){
 			self.addText(this.hash.substr(1));
@@ -711,12 +800,45 @@ MOP.ChatBox.prototype = {
 			self.panel.find('.fn_bar .btnbox .pop.phrase').hide();
 			self.panel.find('.fn_bar .btnbox .ico.phrase').removeClass('active');
 		});
+        this.panel.find('.fn_bar .btnbox .ico.uploadimg').click(function(e){
+            //TODO: to be completed
+            var self = this;
+            if(this.fileUploadStatus){
+                openFileUploader();
+                return;
+            }
+            console.log('upload img');
+            var version = '1.1';
+            jQuery('head').append('<link rel="stylesheet" href="http://img.scimg.cn/styles/jquery-ui/jquery-ui.css" type="text/css" media="all" />');
+            if(typeof jQuery.fn.ajaxSubmit == 'undefined'){
+                jQuery(document).append("<scrip"+"t type=\"text/javascript\" src=\"http://img.scimg.cn/javascripts/member/jquery.form-2.40.js?" + version + "\" charset=\"utf-8\"></s"+"cript>");
+            }
+            $.getScript('http://img.scimg.cn/javascripts/jquery/jquery-ui.js', function(){
+                $.ajax({
+                    dataType: 'script',
+                    type: 'get',
+                    url: 'js/file-uploader.js',
+                    success: function(){
+                        self.fileUploadStatus = true;
+                        console.log('load script');
+                        openFileUploader();
+                    }
+                })
+            });
 
+        });
+        //send message event
 		$(this.btnSend).click(function(){
 			//handle send message event
-            if($.trim(self.msgTextarea.value) == ''){
+            var content = $.trim(self.msgTextarea.value);
+            if(content == ''){
                 alert('回复内容不能为空');
             }
+            var image = self.panel.find('.pop.uploadimg input').val()
+            self.model.sendMessage({
+                text: content,
+                image: image
+            });
             console.log(self.model.getCurrentSession());
 		});
 		//tab close btn
@@ -729,7 +851,7 @@ MOP.ChatBox.prototype = {
 			if(self.options.model.getSessionLength() == 0){
 				self.hide();
 			}
-			console.log(self.options.model.chatSessionsArray);
+			//console.log(self.options.model.chatSessionsArray);
 		});
         this.chattab.on('show', function(e){
 			//console.log(self.persons[e.index]);
@@ -752,6 +874,7 @@ MOP.ChatBox.prototype = {
                 }});
             self.model.set("lastMessageId_" + sessionId, e.messages.datas[e.messages.datas.length - 1].id);
             self.scrollToBottom();
+            //TODO: process insite url for pai and bbs trade
         });
         this.model.on('chat:message', function(e){
             var tmpl = new Template(document.getElementById('tmpl_chat_item_per').innerHTML);
@@ -760,13 +883,18 @@ MOP.ChatBox.prototype = {
                     return msgtool.showBoldAndUrl(msgtool.showFace(txt));
                 }});
                 self.scrollToBottom();
-                //TODO: high light the tab with unread message var key
 
                 var pointer = indexOf(e.sessionsArray, key);
                 if(!$(self.sessions[key].tab).hasClass('active')){
                     $(self.sessions[key].tab).addClass('highlight');
                 }
             }
+
+            //TODO: process insite url for pai and bbs trade
+        });
+        this.model.on('sendcomplete:message', function(e){
+            self.msgTextarea.value = '';
+            self.panel.find('.pop.uploadimg').html('');
         });
 		$(this.btnClose).click(function(){
 			self.hide();
