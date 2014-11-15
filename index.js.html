@@ -47,7 +47,7 @@
 			<li>谢谢！</li>
 		</ul>
 	</div>
-	<div class="btnbox">
+	<div class="btnbox uploadimg">
 		<a class="ico uploadimg"></a>
 		<div class="pop uploadimg">
 			<div class="imgbox"><img src="images/si-1.jpg"/></div>
@@ -77,7 +77,7 @@
 <script type="text/html" id="tmpl_chat_item">
 	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
 	<li class="<?=(this.messages[i].sender_uid == this.uid?'me': 'opp')?>">
-		<div class="cite"><em><?=this.messages[i].sender_username?></em><cite><?=this.messages[i].created_time?></cite></div>
+		<div class="cite"><em><?=(this.messages[i].sender_uid != this.uid? this.messages[i].sender_username : '我')?></em><cite><?=this.messages[i].created_time?></cite></div>
 		<div class="msgcontent">
 			<div class="msgtxt"><div class="inset"><?=this.process(this.messages[i].message)?></div></div>
 			<?if(this.messages[i].images != ''){?>
@@ -104,8 +104,8 @@
 
 <script type="text/html" id="tmpl_chat_item_per">
 	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
-	<li class="<?=(this.messages[i].sender_uid == this.uid?'me': 'opp')?>">
-		<div class="cite"><em><?=this.messages[i].senderName?></em><cite><?=this.messages[i].sendTime?></cite></div>
+	<li class="<?=(this.messages[i].senderUid == this.uid?'me': 'opp')?>">
+		<div class="cite"><em><?=(this.messages[i].senderUid != this.uid? this.messages[i].senderName : '我')?></em><cite><?=this.messages[i].sendTime?></cite></div>
 		<div class="msgcontent">
 			<div class="msgtxt"><div class="inset"><?=this.process(this.messages[i].text)?></div></div>
 			<?if(this.messages[i].images != ''){?>
@@ -131,9 +131,10 @@
 </script>
 <script type="text/javascript" src="core.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/common.js"></script>
 <script type="text/javascript" src="js/msgtool.js"></script>
 <script type="text/javascript" src="js/swfobject.js"></script>
-<script type="text/javascript" src="tools.js"></script>
 <script type="text/javascript" src="tools.js"></script>
 <script type="text/javascript" src="js/template.js"></script>
 <script type="text/javascript" src="MessageBar.js"></script>
