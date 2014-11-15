@@ -344,6 +344,9 @@ img {
   position: absolute;
   top: 0;
 }
+.chatbox .content ul li .msgcontent .msgtxt a {
+  color: #4f4b3a;
+}
 .chatbox .content ul li .msgcontent .msgimg {
   margin-top: 10px;
 }
@@ -527,6 +530,9 @@ img {
 .chatbox .fn_bar div.btnbox .pop.uploadimg .imgbox img {
   max-width: 60px;
   max-height: 60px;
+}
+.chatbox .fn_bar div.btnbox .pop.uploadimg .imgbox a {
+  color: #4f4b3a;
 }
 .chatbox .fn_bar br {
   clear: both;
