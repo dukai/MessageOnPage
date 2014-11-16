@@ -87,8 +87,8 @@
 				</div>
 			</div>
 			<?}?>
-			<?if(false){?>
-			<div class="goods">
+			<?if(this.messages[i].linkinfo){?>
+			<div class="goods" id="<?=this.messages[i].linkinfo.uuid?>">
 				<div class="img"><img src="images/505695.jpg"></div>
 				<div>
 					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>
@@ -100,6 +100,17 @@
 		</div>
 	</li>
 	<?}?>
+</script>
+<script type="text/html" id="tmpl_goods">
+
+    <div class="img"><img src="<?=this.cover_image?>"></div>
+    <div>
+        <div>品　名：<a href="<?=this.url?>" target="_blank"><?=this.name?></a></div>
+        <div><?=this.seller?></div>
+        <?if(this.price){?>
+        <div>价　格：<span><?=this.price?></span></div>
+        <?}?>
+    </div>
 </script>
 
 <script type="text/html" id="tmpl_chat_item_per">
@@ -115,8 +126,8 @@
 				</div>
 			</div>
 			<?}?>
-			<?if(false){?>
-			<div class="goods">
+			<?if(this.messages[i].linkinfo){?>
+			<div class="goods" id="<?=this.messages[i].linkinfo.uuid?>">
 				<div class="img"><img src="images/505695.jpg"></div>
 				<div>
 					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>

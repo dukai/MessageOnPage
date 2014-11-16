@@ -37,6 +37,7 @@ MOP.SMS_TYPE = {
 
 MOP.ModelBase = function(options){
 	this._initModelBase(options);
+    this.unloadGoodsInfo = [];
 };
 
 MOP.ModelBase.prototype = {
@@ -147,6 +148,12 @@ MOP.MsgModel.prototype = {
 			method: 'get',
 			success: function(data){
 				fn && fn(data);
+                for(var i = 0, len = data.datas.length; i < len; i++){
+                    var r = self.analyzeUrl(data.datas[i].message);
+                    if(r){
+                        data.datas[i].linkinfo = r;
+                    }
+                }
 				self.emit('load:message', {
 					messages: data,
 					userInfo: userInfo
@@ -155,6 +162,56 @@ MOP.MsgModel.prototype = {
 			error: function(){}
 		});
 	},
+    analyzeUrl: function (message) {
+        var regexpPai = /pai\.sssc\.cn\/(item)\/(\d+)/i;
+        var regexpBbs = /bbs.sssc.cn\/thread-(\d+)-/i;
+        var rp = regexpPai.exec(message);
+        var rb = regexpBbs.exec(message);
+        var result = null;
+        if(rp){
+            result = {
+                type: rp[1],
+                id: rp[2]
+            };
+        }
+        if(rb){
+            result = {
+                type: 'tid',
+                id: rb[1]
+            };
+        }
+        if(result){
+            var uuid = "li_" + Math.random().toString().replace('.', '');
+            var parseResult = {
+                uuid: uuid,
+                type: result.type,
+                id: result.id
+            };
+            this.unloadGoodsInfo.push(parseResult);
+            return parseResult;
+        }
+        return false;
+    },
+    loadGoodsInfo: function(){
+        while(this.unloadGoodsInfo.length > 0){
+            this.loadPerGoodInfo(this.unloadGoodsInfo.pop());
+        }
+
+    },
+    loadPerGoodInfo: function(info){
+        var self = this;
+        var url = 'http://member.sssc.cn/message/get-link-info?type=' + info.type + '&id=' + info.id + '&callback=?';
+        $.ajax({
+            dataType: 'jsonp',
+            url: url,
+            success: function(data){
+                self.emit('load:goodsinfo', {
+                    info: info,
+                    data: data
+                })
+            }
+        });
+    },
 	setMessage: function(key, value){
 		if(key == 'sms'){
 			//process chat window messages
@@ -868,6 +925,7 @@ MOP.ChatBox.prototype = {
         this.model.on('load:message', function(e){
             var sessionId = e.messages.sessionId;
             self.sessions[sessionId].list.innerHTML = "加载完成";
+            //TODO: need to make template variable to be global
             var tmpl = new Template(document.getElementById('tmpl_chat_item').innerHTML);
             self.sessions[sessionId].list.innerHTML = tmpl.render({messages: e.messages.datas, uid: self.model.get('uid'), process: function(txt){
                     return msgtool.showBoldAndUrl(msgtool.showFace(txt));
@@ -875,8 +933,10 @@ MOP.ChatBox.prototype = {
             self.model.set("lastMessageId_" + sessionId, e.messages.datas[e.messages.datas.length - 1].id);
             self.scrollToBottom();
             //TODO: process insite url for pai and bbs trade
+            self.model.loadGoodsInfo();
         });
         this.model.on('chat:message', function(e){
+            //TODO: need to make template variable to be global
             var tmpl = new Template(document.getElementById('tmpl_chat_item_per').innerHTML);
             for(var key in e.messages){
                 self.sessions[key].list.innerHTML += tmpl.render({messages: e.messages[key], uid: self.model.get('uid'), process: function(txt){
@@ -892,6 +952,11 @@ MOP.ChatBox.prototype = {
 
             //TODO: process insite url for pai and bbs trade
         });
+        this.model.on('load:goodsinfo', function (e) {
+            var tmpl = new Template(document.getElementById('tmpl_goods').innerHTML);
+            console.log(e);
+            $('#' + e.info.uuid).html(tmpl.render(e.data));
+        })
         this.model.on('sendcomplete:message', function(e){
             self.msgTextarea.value = '';
             self.panel.find('.pop.uploadimg').html('');
