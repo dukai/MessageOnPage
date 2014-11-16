@@ -180,7 +180,7 @@ EventEmitter.prototype = {
 		}else{
 			delete this._events[type];
 		}
-	},
+	}
 	
 };
 

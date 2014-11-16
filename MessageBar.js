@@ -43,9 +43,9 @@ MOP.ModelBase = function(options){
 MOP.ModelBase.prototype = {
 	_initModelBase: function(options){
 		this.options = mix({
-			default: {}
+			'default': {}
 		}, options);
-		this.attributes = mix({}, this.options.default);
+		this.attributes = mix({}, this.options['default']);
 		EventEmitter.call(this);
 	},
 
@@ -68,7 +68,7 @@ MOP.MsgModel.prototype = {
 	_initMsgModel: function(options){
 		MOP.ModelBase.call(this, options);
 		this.options = mix({
-			default: {
+			'default': {
                 currentPointer: 0
             }
 		}, options);

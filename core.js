@@ -1,11 +1,13 @@
 (function(){
 	var cacheModules = {};
 	var define = function(id, fn){
+		//TODO: need to fixed ie7 bug
 		var scripts = document.getElementsByTagName('script');
 		var currScript = scripts[scripts.length - 1];
 		var url = currScript.src;
 		var a = document.createElement('a');
 		a.href = url;
+		console.log(a.href);
 		var pathname = a.pathname;
 		if(arguments.length == 2){
 			id = pathname.replace(/[^\/]+\.js/, '') + id;
@@ -22,7 +24,7 @@
 	};
 
 	var require = function(id){
-		if(id[0] == '.'){
+		if(id.charAt(0) == '.'){
 			var scripts = document.getElementsByTagName('script');
 			var currScript = scripts[scripts.length - 1];
 			var url = currScript.src;

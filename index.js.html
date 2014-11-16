@@ -148,12 +148,12 @@
 <script type="text/javascript" src="js/swfobject.js"></script>
 <script type="text/javascript" src="tools.js"></script>
 <script type="text/javascript" src="js/template.js"></script>
-<script type="text/javascript" src="MessageBar.js"></script>
+<script type="text/javascript" src="./MessageBar.js"></script>
 <script type="text/javascript">
 use(function(require){
 var MOP = require('./MessageBar');
 var msgUI = new MOP.MsgUI({
-	model: new MOP.MsgModel({default: {
+	model: new MOP.MsgModel({'default': {
 		uid: 129331
 	}})
 });
