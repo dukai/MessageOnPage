@@ -4,11 +4,11 @@
  * Author DK
  *DATE: 2014-10-20
  */
-define(function(require, exports, module){
+define('messagebar', function(require, exports, module){
 
-var Template = require('./js/template');
-var swfobj = require('./js/swfobject');
-var msgtool = require('./js/msgtool');
+var Template = require('./template');
+var swfobj = require('./swfobject');
+var msgtool = require('./msgtool');
 var MOP = {};
 /**
  * SSSC SMS Const
