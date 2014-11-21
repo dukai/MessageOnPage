@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>DK Toolkit Index</title>
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body style="height: 3000px;">
+<script type="text/html" id="tmpl_popwin">
+	<div class="title">
+		<?=this.title?>
+		<div class="fn_btns"><a href="<?=this.clearNotice?>" class="ignore-ajax">清除通知</a><a href="<?=this.checkInbox?>" target="_blank">收件箱</a></div>
+	</div>
+	<div class="content">
+		<ul class="sms_list">
+		</ul>
+		<div class="ad_view"></div>
+	</div>
+</script>
+<script type="text/html" id="tmpl_fn_bar">
+	<div class="btnbox">
+		<a class="ico smile"></a>
+		<div class="pop smile">
+			<ul>
+				<li class="s1">
+					<?for(var i = 0; i < 50; i++){?>
+					<span><a href="#<?=this.faces[i][1]?>">&nbsp;</a></span>
+					<?}?>
+				</li>
+				<li class="s2">
+				<?for(var i = 50; i < 90; i++){?>
+					<span><a href="#<?=this.faces[i][1]?>">&nbsp;</a></span>
+					<?}?>
+				</li>
+			</ul>
+			<div class="tab">
+				<a class="active">1</a><a>2</a>
+			</div>
+		</div>
+	</div>
+	<div class="btnbox">
+		<a class="ico phrase"></a>
+		<ul class="pop phrase">
+			<li>诚问价格？</li>
+			<li>中介费一人一半。</li>
+			<li>已经出了，感谢关注！</li>
+			<li>谢谢！</li>
+		</ul>
+	</div>
+	<div class="btnbox uploadimg">
+		<a class="ico uploadimg"></a>
+		<div class="pop uploadimg">
+			<div class="imgbox"><img src="images/si-1.jpg"/></div>
+			<a>删除</a>
+		</div>
+	</div>
+	<div class="btnbox"><a class="ico history"></a></div>
+</script>
+<script type="text/html" id="tmpl_popwin_msg">
+	<?if(this.messages.length == 0){?>
+		<a href="<?=this.checkInbox?>" class="no-new" target="_blank">暂无新通知，点击进入收件箱</a>
+	<?}?>
+
+	<?for(var i = 0, len = this.messages.length; i < len; i++){
+	if(this.messages[i].type == 0){
+		var url = 'http://member.sssc.cn/message/m?session_id=' + this.messages[i].sessionId;
+	}else{
+		var url = 'http://member.sssc.cn/message/system?type=' + this.messages[i].type;
+	}
+	?>
+	<li class="" sessionid="<?=this.messages[i].sessionId?>">
+		<b class="username"><?=this.messages[i].senderName?></b><span class="date"><?=this.messages[i].sendTime?></span>
+		<p class="msg_txt" url="<?=url?>" type="<?=this.messages[i].type?>" sessionid="<?=this.messages[i].sessionId?>" sendname="<?=this.messages[i].senderName?>" senduid="<?=this.messages[i].senderUid?>"><?=this.messages[i].text?></p>
+	</li>
+	<?}?>
+</script>
+<script type="text/html" id="tmpl_chat_item">
+	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
+	<li class="<?=(this.messages[i].sender_uid == this.uid?'me': 'opp')?>">
+		<div class="cite"><em><?=(this.messages[i].sender_uid != this.uid? this.messages[i].sender_username : '我')?></em><cite><?=this.messages[i].created_time?></cite></div>
+		<div class="msgcontent">
+			<div class="msgtxt"><div class="inset"><?=this.process(this.messages[i].message)?></div></div>
+			<?if(this.messages[i].images != ''){?>
+			<div class="msgimg">
+				<div class="inset">
+					<a href="<?=this.messages[i].imageUrls[0].orig?>" target="_blank"><img src="<?=this.messages[i].imageUrls[0].thumb?>"/></a>
+				</div>
+			</div>
+			<?}?>
+			<?if(this.messages[i].linkinfo){?>
+			<div class="goods" id="<?=this.messages[i].linkinfo.uuid?>">
+				<div class="img"><img src="images/505695.jpg"></div>
+				<div>
+					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>
+					<div>出品人：<a href="#">冰雪咖啡</a></div>
+					<div>价　格：<a href="#">120元</a></div>
+				</div>
+			</div>
+			<?}?>
+		</div>
+	</li>
+	<?}?>
+</script>
+<script type="text/html" id="tmpl_goods">
+
+    <div class="img"><img src="<?=this.cover_image?>"></div>
+    <div>
+        <div>品　名：<a href="<?=this.url?>" target="_blank"><?=this.name?></a></div>
+        <div><?=this.seller?></div>
+        <?if(this.price){?>
+        <div>价　格：<span><?=this.price?></span></div>
+        <?}?>
+    </div>
+</script>
+
+<script type="text/html" id="tmpl_chat_item_per">
+	<?for(var i = 0, len = this.messages.length; i < len; i++){?>
+	<li class="<?=(this.messages[i].senderUid == this.uid?'me': 'opp')?>">
+		<div class="cite"><em><?=(this.messages[i].senderUid != this.uid? this.messages[i].senderName : '我')?></em><cite><?=this.messages[i].sendTime?></cite></div>
+		<div class="msgcontent">
+			<div class="msgtxt"><div class="inset"><?=this.process(this.messages[i].text)?></div></div>
+			<?if(this.messages[i].images != ''){?>
+			<div class="msgimg">
+				<div class="inset">
+					<a href="<?= ('http://img.scimg.cn/userupload/messageimages/orig/' + this.messages[i].images)?>" target="_blank"><img src="<?=('http://img.scimg.cn/userupload/messageimages/80x80/' + this.messages[i].images)?>"/></a>
+				</div>
+			</div>
+			<?}?>
+			<?if(this.messages[i].linkinfo){?>
+			<div class="goods" id="<?=this.messages[i].linkinfo.uuid?>">
+				<div class="img"><img src="images/505695.jpg"></div>
+				<div>
+					<div>品　名：<a href="#">波罗的海天然蜜蜡珠子SPT10 </a></div>
+					<div>出品人：<a href="#">冰雪咖啡</a></div>
+					<div>价　格：<a href="#">120元</a></div>
+				</div>
+			</div>
+			<?}?>
+		</div>
+	</li>
+	<?}?>
+</script>
+<script src="js/jquery.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/common.js"></script>
+<script src="js/scsms.js"></script>
+<script type="text/javascript">
+use(function(require){
+var MOP = require('./js/messagebar');
+var msgUI = new MOP.MsgUI({
+	model: new MOP.MsgModel({'default': {
+		uid: 129331
+	}})
+});
+});
+</script>
+</body>
+</html>
