@@ -12,9 +12,17 @@ module.exports = function(grunt){
 				],
 				dest: 'js/scsms.js'
 			}
+		},
+		uglify: {
+			scsms: {
+				files: {
+					"js/scsms.min.js": ["js/scsms.js"]
+				}
+			}
 		}
 	});
 	grunt.loadNpmTasks('grunt-contrib-concat');
-	grunt.registerTask('default', ['concat']);
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.registerTask('default', ['concat', 'uglify']);
 
 };
